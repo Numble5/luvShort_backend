@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class KakaoApiController {
 
     private final KakaoApiService kakaoApiService;
-    @PostMapping
+
+    // FIXME: 프론트가 /api/auth/kakao-login로 요청한 access_token을 카카오 서버에서 받아야함(redirect URI 등록해야 하는듯)
+   @PostMapping
     public ResponseEntity<?> test(@RequestBody KakaoAccessToken kakaoAccessToken){
         log.info("KakaoAccessToken: {}",kakaoAccessToken);
         log.info("access_token : {}",kakaoAccessToken.getAccess_token());
