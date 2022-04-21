@@ -1,6 +1,6 @@
 package com.example.backend.service.api;
 
-import com.example.backend.config.dto.KakaoUserInfoResponseDto;
+import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.fasterxml.jackson.databind.ObjectMapper;

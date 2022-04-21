@@ -1,6 +1,6 @@
 package com.example.backend.controller.api;
 
-import com.example.backend.config.dto.KakaoAccessToken;
+import com.example.backend.config.auth.dto.KakaoAccessToken;
 import com.example.backend.service.api.KakaoApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
