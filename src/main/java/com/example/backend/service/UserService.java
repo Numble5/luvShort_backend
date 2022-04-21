@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.config.dto.KakaoUserInfoResponseDto;
+import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.UserRepository;
