@@ -1,5 +1,6 @@
-package com.example.backend.security;
+package com.example.backend.jwt;
 
+import com.example.backend.domain.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -17,9 +18,8 @@ public class TokenProvider {
     // 최소 32자리(256bit)
     private final String RAW_SECRET_KEY = "anstlflxltmxhflwpdltmsenpqxhzmstodtjdrjawmd20210118wpdlejqmfdbxl";
 
-    private final String SAMPLE_SUBJECT = "luvShort";
-
-    public String createJws() {
+    // User 엔티티로 JWT 생성
+    public String createJws(User user) {
 
         // 기한 지금으로부터 1일로 설정
         Date expiryDate = Date.from(
@@ -29,7 +29,7 @@ public class TokenProvider {
         Key key = Keys.hmacShaKeyFor(RAW_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         String jws = Jwts.builder()
-                .setSubject(SAMPLE_SUBJECT)
+                .setSubject(user.getEmail()) // 사용자의 이메일 정보를 payload에 넣기
                 .signWith(key)
                 .setExpiration(expiryDate)
                 .compact();
@@ -37,7 +37,7 @@ public class TokenProvider {
         return jws;
     }
 
-    public boolean isValid(String jws) {
+    public boolean isValid(String jws, User user) {
         Key key = Keys.hmacShaKeyFor(RAW_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         try {
@@ -45,8 +45,7 @@ public class TokenProvider {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(jws);
-
-            return parsed.getBody().getSubject().equals(SAMPLE_SUBJECT);
+            return parsed.getBody().getSubject().equals(user.getEmail());
         } catch (JwtException e) {
             return false;
         }
