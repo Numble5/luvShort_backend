@@ -17,10 +17,12 @@ public class GlobalControllerAdvice {
     //  @PostConstruct 를 설정해놓은 init 메소드는 WAS가 띄워질 때 실행
     @PostConstruct
     private void postContruct() {
-        redirectMap.put(ReturnCode.USER_EXIST_USING_THIS_EMAIL, "/"); //TODO: 리다이렉트 URL 다시 정하기
+        //TODO: 리다이렉트 URL 다시 정하기
+        redirectMap.put(ReturnCode.USER_EXIST_USING_THIS_EMAIL, "/");
+        redirectMap.put(ReturnCode.FAIL_TO_GET_KAKAO_ACCOUNT, "/");
     }
 
-    // FIXME: 프론트 리액트니까 MVC 쓸 수 없음..
+    // FIXME: 프론트 리액트여도 MVC 쓸 수 있나?
     @ExceptionHandler({com.example.backend.exception.BackendException.class})
     public ModelAndView handleBackendException(com.example.backend.exception.BackendException e){
         ModelAndView mav = new ModelAndView();
