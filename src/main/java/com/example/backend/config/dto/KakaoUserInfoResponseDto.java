@@ -6,10 +6,9 @@ import lombok.Getter;
 import net.minidev.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Getter
-public class KakaoAccessTokenResponseDto {
+public class KakaoUserInfoResponseDto {
     // 카카오 REST API 공식문서 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
     private final Long id;
     private final Boolean has_signed_up;
@@ -21,7 +20,7 @@ public class KakaoAccessTokenResponseDto {
     private final String email = "example@example.com"; // FIXME
 
     @Builder
-    public KakaoAccessTokenResponseDto(Long id, Boolean has_signed_up, LocalDateTime connected_at, LocalDateTime synched_at, JSONObject properties, JSONObject KakaoAccount) {
+    public KakaoUserInfoResponseDto(Long id, Boolean has_signed_up, LocalDateTime connected_at, LocalDateTime synched_at, JSONObject properties, JSONObject KakaoAccount) {
         this.id = id;
         this.has_signed_up = has_signed_up;
         this.connected_at = connected_at;
