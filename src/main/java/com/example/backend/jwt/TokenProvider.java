@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -14,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 // https://tunaguy.tistory.com/entry/Spring-Boot%EC%97%90%EC%84%9C-JWT-%EC%83%9D%EC%84%B1-%EB%B0%8F-%EA%B2%80%EC%A6%9D-%EA%B0%84%EB%8B%A8%ED%9E%88-%EA%B5%AC%ED%98%84?category=926842
+@Service
 public class TokenProvider {
     // 최소 32자리(256bit)
     private final String RAW_SECRET_KEY = "anstlflxltmxhflwpdltmsenpqxhzmstodtjdrjawmd20210118wpdlejqmfdbxl";
