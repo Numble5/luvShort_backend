@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
+import com.example.backend.domain.user.enums.SocialAccountType;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.UserRepository;
@@ -8,12 +9,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
+    public boolean checkAlreadyRegistered(SocialAccountType socialAccountType, Long socialId){
+        return userRepository.existsBySocialAccountTypeAndSocialId(socialAccountType, socialId);
+    }
     // 인증 서버(카카오, 네이버...)에서 받은 정보로 User 만들기
     public void createUser(KakaoUserInfoResponseDto kakaoUserInfoResponseDto){
         final String email = kakaoUserInfoResponseDto.getEmail();
