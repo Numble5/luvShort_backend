@@ -10,7 +10,7 @@ import com.example.backend.exception.BackendException;
 import com.example.backend.jwt.TokenProvider;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
-import com.example.backend.service.api.KakaoApiService;
+import com.example.backend.api.kakao.KakaoApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
