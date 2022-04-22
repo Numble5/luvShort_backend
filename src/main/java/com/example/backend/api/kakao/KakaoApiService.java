@@ -1,4 +1,4 @@
-package com.example.backend.service.api;
+package com.example.backend.api.kakao;
 
 import com.example.backend.config.auth.dto.KakaoAccessTokenInfo;
 import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
