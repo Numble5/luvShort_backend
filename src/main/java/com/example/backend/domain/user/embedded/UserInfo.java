@@ -1,6 +1,7 @@
 package com.example.backend.domain.user.embedded;
 
 import com.example.backend.domain.user.enums.GenderType;
+import com.example.backend.domain.user.enums.SocialAccountType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,11 @@ public class UserInfo {
 
     @Enumerated(EnumType.STRING)
     private GenderType genderType;
+
+    @Enumerated(EnumType.STRING)
+    private SocialAccountType socialAccountType;
+
+    private Long socialId;
+
 
 }
