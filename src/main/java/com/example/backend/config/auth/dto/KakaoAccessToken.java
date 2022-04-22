@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 public class KakaoAccessToken {
 
     // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-request
-    private String access_token;                       // 사용자 액세스 토큰 값
+    private String accessToken;                       // 사용자 액세스 토큰 값
 
     @Builder
     public KakaoAccessToken(String access_token){
-        this.access_token = access_token;
+        this.accessToken = access_token;
     }
 }
