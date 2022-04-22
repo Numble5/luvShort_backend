@@ -55,20 +55,21 @@ public class KakaoApiService {
      *     }
      * }
      */
-    public String getUserByAccessToken(String accessToken){
+    public ResponseEntity<?> getUserByAccessToken(String accessToken){
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer"+accessToken);
+        headers.set("Authorization", "Bearer "+accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         // 요청 만들기
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-        String url = "https://kapi.kakao.com/v2/user/me";
 
+        String url = "https://kapi.kakao.com/v2/user/me";
         try {
             // 응답 받기
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            return response.getBody();
+            log.info("response: {}",response.getBody());
+            return response;
         } catch (RestClientException ex) {
             ex.printStackTrace();
             throw new BackendException(ReturnCode.FAIL_TO_GET_KAKAO_ACCOUNT);
@@ -95,7 +96,7 @@ public class KakaoApiService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("Authorization", "Bearer"+accessToken);
+        headers.add("Authorization", "Bearer "+accessToken);
 
         // 요청 만들기
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
