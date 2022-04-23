@@ -1,7 +1,7 @@
 package com.example.backend.api.kakao;
 
-import com.example.backend.config.auth.dto.KakaoAccessTokenInfo;
-import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
+import com.example.backend.config.auth.dto.KakaoAccount;
+import com.example.backend.config.auth.dto.KakaoUserInfo;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -55,7 +54,7 @@ public class KakaoApiService {
      *     }
      * }
      */
-    public ResponseEntity<?> getUserByAccessToken(String accessToken){
+    public String getUserByAccessToken(String accessToken){
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer "+accessToken);
@@ -67,10 +66,21 @@ public class KakaoApiService {
         String url = "https://kapi.kakao.com/v2/user/me";
         try {
             // 응답 받기
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            log.info("response: {}",response.getBody());
-            return response;
-        } catch (RestClientException ex) {
+            String responseBody = restTemplate.postForEntity(url, request, String.class).getBody();
+            KakaoUserInfo userInfo = objectMapper.readValue(responseBody, KakaoUserInfo.class);
+            log.info("userInfo.getId() : {}",userInfo.getId()); //ok
+            log.info("userInfo.getConnectedAt() : {}",userInfo.getConnectedAt()); //ok
+
+            KakaoAccount kakaoAccount = new KakaoAccount(userInfo.getKakaoAccount());
+            //log.info("userInfo.getKakaoAccount() : {}",userInfo.getKakaoAccount());
+            // 이메일 관련필드
+            log.info("userInfo.getEmailNeedsAgreement() : {}",kakaoAccount.getEmailNeedsAgreement());
+            log.info("userInfo.getIsEmailValid() : {}",kakaoAccount.getIsEmailValid());
+            log.info("userInfo.userInfo.getIsEmailVerified() : {}",kakaoAccount.getIsEmailVerified());
+            log.info("userInfo.getEmail() : {}",kakaoAccount.getEmail());
+
+            return responseBody;
+        } catch (RestClientException | JsonProcessingException ex) {
             ex.printStackTrace();
             throw new BackendException(ReturnCode.FAIL_TO_GET_KAKAO_ACCOUNT);
         }

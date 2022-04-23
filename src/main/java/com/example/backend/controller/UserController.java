@@ -1,9 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.config.auth.dto.KakaoAccessToken;
-import com.example.backend.config.auth.dto.KakaoUserInfoResponseDto;
 import com.example.backend.domain.user.User;
-import com.example.backend.domain.user.enums.SocialAccountType;
 import com.example.backend.dto.ResponseDTO;
 import com.example.backend.dto.SignInDto;
 import com.example.backend.exception.BackendException;
