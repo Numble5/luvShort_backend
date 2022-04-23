@@ -1,13 +1,18 @@
 package com.example.backend.service;
 
-import com.example.backend.config.auth.dto.KakaoUserInfo;
-import com.example.backend.domain.user.enums.SocialAccountType;
-import com.example.backend.exception.BackendException;
+import com.example.backend.domain.user.User;
+import com.example.backend.dto.SignUpDto;
 import com.example.backend.exception.ReturnCode;
+import com.example.backend.jwt.TokenProvider;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Slf4j
@@ -16,24 +21,45 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    public boolean checkAlreadyRegistered(SocialAccountType socialAccountType, Long socialId){
-        return userRepository.existsBySocialAccountTypeAndSocialId(socialAccountType, socialId);
-    }
-    // 인증 서버(카카오, 네이버...)에서 받은 정보로 User 만들기
-    public void createUser(KakaoUserInfo kakaoUserInfo){
-        /*
-        final String email = kakaoUserInfo.getEmail();
-        log.info("email from kakaoUserInfo : {}",email);
+    private final TokenProvider tokenProvider;
 
-        // 해당 이메일이 이미 User 테이블에 있으면 Exception 처리
-        if(userRepository.existsByEmail(email)){
-            log.warn("email already exists");
-            throw new BackendException(ReturnCode.USER_EXIST_USING_THIS_EMAIL);
+    // User 엔티티 만들고 레포지토리에 저장
+    // 1. 프론트로부터 받은 jwt로 이메일 디코딩해서 사용자 검증
+    // 2. signUpDto를 User 엔티티로 변환
+    // 3. 관심사 추가
+    // 4. 레포지토리에 저장
+    @Transactional
+    public ReturnCode createUser(SignUpDto signUpDto){
+        // 1.
+        String email = tokenProvider.getEmailfromJwt(signUpDto.getJwt());
+        if(email.equals("forged")){
+            return ReturnCode.FORGED_EMAIL;
         }
-        // 해당 이메일이 User 테이블에 없을 때만 User 엔티티 만들기
-        userRepository.save(kakaoUserInfo.toEntity());
-        log.info("user saved");
+        log.info("email: {}", email);
+        // 2.
+        User user = signUpDto.toEntity();
+        // TODO: 관심사 추가
+        userRepository.save(user);
+        return ReturnCode.SUCCESS;
+    }
 
-         */
+    // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
+    // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
+    public ResponseEntity<?> signUpOrSignin(String email,String jwt){
+        // 1. step1으로 이동
+        log.info("jwt: {}",jwt);
+        if(!userRepository.existsByEmail(email)){
+            JSONObject reponseBody = new JSONObject();
+            reponseBody.put("jwt", jwt);
+            reponseBody.put("redirectUrl", "/");
+            return ResponseEntity.ok().body(reponseBody);
+        }
+        // 2. 메인페이지로 이동
+        else{
+            JSONObject reponseBody = new JSONObject();
+            reponseBody.put("jwt", jwt);
+            reponseBody.put("redirectUrl", "/step1");
+            return ResponseEntity.ok().body(reponseBody);
+        }
     }
 }

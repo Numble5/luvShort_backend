@@ -20,8 +20,8 @@ public class TokenProvider {
     // 최소 32자리(256bit)
     private final String RAW_SECRET_KEY = "anstlflxltmxhflwpdltmsenpqxhzmstodtjdrjawmd20210118wpdlejqmfdbxl";
 
-    // User 엔티티로 JWT 생성
-    public String createJws(User user) {
+    // 소셜 이메일로 JWT 생성
+    public String createJws(String email) {
 
         // 기한 지금으로부터 1일로 설정
         Date expiryDate = Date.from(
@@ -31,7 +31,7 @@ public class TokenProvider {
         Key key = Keys.hmacShaKeyFor(RAW_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         String jws = Jwts.builder()
-                .setSubject(user.getEmail()) // 사용자의 이메일 정보를 payload에 넣기
+                .setSubject(email) // 사용자의 이메일 정보를 payload에 넣기
                 .signWith(key)
                 .setExpiration(expiryDate)
                 .compact();
@@ -51,5 +51,19 @@ public class TokenProvider {
         } catch (JwtException e) {
             return false;
         }
+    }
+
+    public String getEmailfromJwt(String jws){
+        Key key = Keys.hmacShaKeyFor(RAW_SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        try {
+            Jws<Claims> parsed = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jws);
+            return parsed.getBody().getSubject();
+        } catch (JwtException e) {
+            return "forged";
+        }
+
     }
 }
