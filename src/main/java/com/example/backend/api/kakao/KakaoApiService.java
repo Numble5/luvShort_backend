@@ -76,45 +76,6 @@ public class KakaoApiService {
         }
     }
 
-    // 카카오 '토큰 정보 보기' API에서 accessToken으로 '회원번호' 받아오기
-    // cf) 카카오 '토큰 정보 보기' API https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#get-token-info
-    /**
-     * // 요청
-     * GET /v1/user/access_token_info HTTP/1.1
-     * Host: kapi.kakao.com
-     * Authorization: Bearer ${ACCESS_TOKEN} // 헤더에 추가
-     *
-     * // 응답
-     * HTTP/1.1 200 OK
-     * {
-     *     "id":123456789,
-     *     "expires_in": 7199,
-     *     "app_id":1234
-     * }
-     */
-    public Long accessTokenInfo(String accessToken){
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("Authorization", "Bearer "+accessToken);
-
-        // 요청 만들기
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-
-        String url = "https://kapi.kakao.com/v1/user/access_token_info";
-        try {
-            // 응답 받기
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class, request);
-            // DTO에 저장
-            KakaoAccessTokenInfo accessTokenInfo = objectMapper.readValue(response.getBody(), KakaoAccessTokenInfo.class);
-            // 그 중 회원번호만 리턴
-            return accessTokenInfo.getId();
-        } catch (RestClientException | JsonProcessingException ex) {
-            ex.printStackTrace();
-            throw new BackendException(ReturnCode.FAIL_TO_GET_KAKAO_ACCESS_TOKEN_INFO);
-        }
-    }
-
     public KakaoUserInfoResponseDto getKakaoAccount(String accessToken){
 
         // 요청 관련 API 문서 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-request
