@@ -45,7 +45,18 @@ public class JpaTestApplicationTests {
     @Test
     public void contextLoads(){
 
-        User user = User.builder().email("syhan97@naver.com").userInfo(new UserInfo(26,"서울", GenderType.FEMALE, SocialAccountType.KAKAO, 2209563658L)).build();
+        User user = User
+                .builder()
+                .email("syhan97@naver.com")
+                .userInfo(
+                        UserInfo
+                                .builder()
+                                .age(26)
+                                .city("서울")
+                                .genderType(GenderType.FEMALE)
+                                .build()
+                )
+        .build();
         userRepository.save(user);
 
         // 양방향 관계 설정
