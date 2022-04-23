@@ -27,7 +27,7 @@ public class KakaoApiService {
     private final ObjectMapper objectMapper;
 
 
-    // 카카오 '사용자 정보 가져오기' API에서 accessToken으로 정보 받아오기
+    // 방법 1 :카카오 '사용자 정보 가져오기' API에서 accessToken으로 정보 받아오기
     // cf) 카카오 '사용자 정보 가져오기' API https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info
     /**
      * // 요청
@@ -76,6 +76,8 @@ public class KakaoApiService {
         }
     }
 
+    // 방법 2: 카카오 '사용자 정보 가져오기' API에서 어드민키로 정보 받아오기
+    // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-admin-key
     public KakaoUserInfoResponseDto getKakaoAccount(String accessToken){
 
         // 요청 관련 API 문서 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#req-user-info-request
