@@ -23,18 +23,4 @@ public class KakaoAccount {
         this.email = (String) kakaoAccount.get("email");
     }
 
-    /*
-    @JsonProperty("kakao_account.email_needs_agreement")
-    private Boolean emailNeedsAgreement;
-
-    @JsonProperty("kakao_account.is_email_valid")
-    private Boolean isEmailValid;
-
-    @JsonProperty("kakao_account.is_email_verified")
-    private Boolean isEmailVerified;
-
-    @JsonProperty("kakao_account.email")
-    private String email;
-
-     */
 }
