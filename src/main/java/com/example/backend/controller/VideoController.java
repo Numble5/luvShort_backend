@@ -12,12 +12,12 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value ="/video")
+@RequestMapping(value ="/api")
 public class VideoController {
 
     private final VideoService videoService;
 
-    @RequestMapping(value="/category",method = RequestMethod.GET)
+    @RequestMapping(value="/videos",method = RequestMethod.GET)
     List<ResponseVideoInfo> videoList() {
         return videoService.getAllVideo();
     }
