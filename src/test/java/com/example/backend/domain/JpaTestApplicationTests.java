@@ -4,6 +4,7 @@ import com.example.backend.BackendApplication;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
+import com.example.backend.domain.user.enums.SocialAccountType;
 import com.example.backend.domain.video.Video;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoRepository;
@@ -16,6 +17,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -41,8 +45,7 @@ public class JpaTestApplicationTests {
     @Test
     public void contextLoads(){
 
-
-        User user = User.builder().email("syhan97@naver.com").userInfo(new UserInfo(26,"서울", GenderType.FEMALE)).build();
+        User user = User.builder().email("syhan97@naver.com").userInfo(new UserInfo(26,"서울", GenderType.FEMALE, SocialAccountType.KAKAO, 2209563658L)).build();
         userRepository.save(user);
 
         // 양방향 관계 설정
