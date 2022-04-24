@@ -40,12 +40,13 @@ public class Video extends BaseEntity {
     private List<VideoCategory> Categories = new LinkedList<>(); // 해당 영상이 속한 카테고리들(여러개가능)
 
     @Builder
-    public Video(String title, String content, Long hits, String thumbnailUrl, String videoUrl, User uploader){
+    public Video(String title, String content, Long hits, String thumbnailUrl, String videoUrl, User uploader,VideoType videoType){
         this.title = title;
         this.content = content;
         this.hits = Long.valueOf("0"); // 조회수는 0으로 초기화
         this.thumbnailUrl = thumbnailUrl;
         this.videoUrl = videoUrl;
+        this.videoType = videoType;
         this.uploader = uploader;
     }
 
