@@ -1,6 +1,8 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.SignUpDto;
+import com.example.backend.domain.user.enums.GenderType;
+import com.example.backend.dto.signup.SignUpRequestDto;
+import com.example.backend.dto.signup.SignUpResponseDto;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.jwt.TokenProvider;
@@ -30,24 +32,22 @@ public class UserController {
 
     // 시작하기 버튼을 눌러 회원가입을 완료한다
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpDto signUpDto) throws BackendException {
-        ReturnCode returnCode = userService.createUser(signUpDto);
-        return new ResponseEntity<>("{}", HttpStatus.CREATED);
+    public SignUpResponseDto signup(@RequestBody SignUpRequestDto signUpRequestDto) throws BackendException {
+        return userService.createUser(signUpRequestDto);
     }
-
 
     // NOTE: JWT 기반 로그인은 모든 요청마다 사용자를 검증하는 방식으로 구현함 (세션과의 차이점)
     //  Spring Security가 모든 요청마다 서블릿 필터같은 역할을 해서 사용자 검증함
-    //  로그인할 때 사용자 검증에 쓸 token과 SignUpDto 생성
+    //  로그인할 때 사용자 검증에 쓸 token과 SignUpRequestDto 생성
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<?> authenticate(@RequestBody SignUpRequestDto signUpRequestDto) {
         /*
-        Optional<User> user = userRepository.findByEmail(signUpDto.getEmail());
+        Optional<User> user = userRepository.findByEmail(signUpRequestDto.getEmail());
         if(user.isPresent()) {
             final String token = tokenProvider.createJws(user.get()); // 로그인 할 때 토큰 생성
-            final SignUpDto responseSignInDto = SignUpDto.builder()
+            final SignUpRequestDto responseSignInDto = SignUpRequestDto.builder()
                     .token(token)
-                    .email(signUpDto.getEmail())
+                    .email(signUpRequestDto.getEmail())
                     .build();
             return ResponseEntity.ok().body(responseSignInDto);
         } else {

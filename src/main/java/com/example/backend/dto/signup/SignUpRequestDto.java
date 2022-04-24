@@ -1,9 +1,8 @@
-package com.example.backend.dto;
+package com.example.backend.dto.signup;
 
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
-import com.example.backend.domain.user.enums.SocialAccountType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignUpDto {
+public class SignUpRequestDto {
 
     private String nickname;
     private int age;

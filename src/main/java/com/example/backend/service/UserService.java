@@ -1,7 +1,8 @@
 package com.example.backend.service;
 
 import com.example.backend.domain.user.User;
-import com.example.backend.dto.SignUpDto;
+import com.example.backend.dto.signup.SignUpRequestDto;
+import com.example.backend.dto.signup.SignUpResponseDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.jwt.TokenProvider;
 import com.example.backend.repository.UserRepository;
@@ -11,8 +12,6 @@ import net.minidev.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 
 @Slf4j
@@ -29,23 +28,26 @@ public class UserService {
     // 3. 관심사 추가
     // 4. 레포지토리에 저장
     @Transactional
-    public ReturnCode createUser(SignUpDto signUpDto){
+    public SignUpResponseDto createUser(SignUpRequestDto signUpRequestDto){
         // 1.
-        String email = tokenProvider.getEmailfromJwt(signUpDto.getJwt());
+        String email = tokenProvider.getEmailfromJwt(signUpRequestDto.getJwt());
         if(email.equals("forged")){
-            return ReturnCode.FORGED_EMAIL;
+            return SignUpResponseDto.builder().status(400).build();
         }
         log.info("email: {}", email);
         // 2.
-        User user = signUpDto.toEntity();
+        User user = signUpRequestDto.toEntity();
         // TODO: 관심사 추가
         userRepository.save(user);
-        return ReturnCode.SUCCESS;
+        return SignUpResponseDto.builder()
+                .nickname(user.getNickname())
+                .jwt(signUpRequestDto.getJwt())
+                .status(200).build();
     }
 
     // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
     // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
-    public ResponseEntity<?> signUpOrSignin(String email,String jwt){
+    public ResponseEntity<?> signUpOrSignin(String email, String jwt){
         // 1. step1으로 이동
         log.info("jwt: {}",jwt);
         if(!userRepository.existsByEmail(email)){
