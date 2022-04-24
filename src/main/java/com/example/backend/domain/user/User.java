@@ -26,6 +26,8 @@ public class User extends BaseEntity {
     private String email;
     private String nickname;
 
+    private String profileImg;
+
     @Enumerated(EnumType.STRING)
     private RoleType roleType; // 각 사용자의 권한(관리자/일반회원)을 관리할 Enum 클래스
 
