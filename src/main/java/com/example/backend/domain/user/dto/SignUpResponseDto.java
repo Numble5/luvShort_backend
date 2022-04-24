@@ -1,4 +1,4 @@
-package com.example.backend.dto.signup;
+package com.example.backend.domain.user.dto;
 
 import lombok.Builder;
 
@@ -6,7 +6,6 @@ import lombok.Builder;
 public class SignUpResponseDto {
 
     private String nickname;
-    private String jwt;
     private int status;
 
 }

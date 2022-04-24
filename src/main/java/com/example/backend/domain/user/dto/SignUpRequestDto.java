@@ -1,4 +1,4 @@
-package com.example.backend.dto.signup;
+package com.example.backend.domain.user.dto;
 
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
@@ -22,7 +22,6 @@ public class SignUpRequestDto {
     private String city;
     private String district;
     private List<String> interests;
-    private String jwt;
 
     public User toEntity() {
 
