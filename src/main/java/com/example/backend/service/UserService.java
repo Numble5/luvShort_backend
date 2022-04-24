@@ -51,14 +51,14 @@ public class UserService {
         if(!userRepository.existsByEmail(email)){
             JSONObject reponseBody = new JSONObject();
             reponseBody.put("jwt", jwt);
-            reponseBody.put("redirectUrl", "/");
+            reponseBody.put("redirectUrl", "/step1");
             return ResponseEntity.ok().body(reponseBody);
         }
         // 2. 메인페이지로 이동
         else{
             JSONObject reponseBody = new JSONObject();
             reponseBody.put("jwt", jwt);
-            reponseBody.put("redirectUrl", "/step1");
+            reponseBody.put("redirectUrl", "/");
             return ResponseEntity.ok().body(reponseBody);
         }
     }
