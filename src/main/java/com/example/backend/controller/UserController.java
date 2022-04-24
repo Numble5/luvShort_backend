@@ -1,11 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.user.enums.GenderType;
-import com.example.backend.dto.signup.SignUpRequestDto;
-import com.example.backend.dto.signup.SignUpResponseDto;
+import com.example.backend.domain.user.dto.SignUpRequestDto;
+import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.exception.BackendException;
-import com.example.backend.exception.ReturnCode;
-import com.example.backend.jwt.TokenProvider;
+import com.example.backend.security.TokenProvider;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.UserService;
 import com.example.backend.api.kakao.KakaoApiService;

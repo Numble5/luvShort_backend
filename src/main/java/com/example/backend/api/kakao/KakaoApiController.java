@@ -1,6 +1,6 @@
 package com.example.backend.api.kakao;
 
-import com.example.backend.jwt.TokenProvider;
+import com.example.backend.security.TokenProvider;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
