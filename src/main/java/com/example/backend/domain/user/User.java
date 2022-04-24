@@ -23,6 +23,7 @@ public class User extends BaseEntity {
     @Column(name = "user_idx")
     private Long idx;
 
+    @Column(nullable = false)
     private String email;
     private String nickname;
 
@@ -52,9 +53,13 @@ public class User extends BaseEntity {
         this.email = email;
         this.nickname = nickname;
         this.roleType = roleType;
-        this.status = UserStatus.NORMAL; // 처음 등록한 회원은 무조건 정상회원
+        this.status = status;
         this.userInfo = userInfo;
         this.profile = profile;
+    }
+
+    public void addInterest(UserInterest userInterest){
+        this.interests.add(userInterest);
     }
 
     public void addMyVideo(Video myVideo){
