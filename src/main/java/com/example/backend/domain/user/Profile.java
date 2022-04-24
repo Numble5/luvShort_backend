@@ -16,4 +16,7 @@ public class Profile extends BaseEntity {
     @Column(name = "profile_idx")
     private Long idx;
 
+    @Column
+    private String profileImg;
+
 }
