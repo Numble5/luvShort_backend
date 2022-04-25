@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.security.TokenProvider;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Optional;
 
 
 @Slf4j
@@ -53,5 +55,11 @@ public class UserService {
         return false;
     }
 
+    // userId -> user info 전체 return
+    public UserInfo getUserInfoById(Long userId) {
+        Optional<User> findByIdUser = userRepository.findById(userId);
+        if(!findByIdUser.isPresent()) return null;
+        return findByIdUser.get().getUserInfo();
+    }
 
 }
