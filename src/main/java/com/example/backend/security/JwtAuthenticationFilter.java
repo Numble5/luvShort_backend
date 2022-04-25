@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // 리퀘스트에서 토큰 가져오기.
             String token = parseCookie(request);
-            log.info("Filter is running...");
+            log.info("Filter is running... token: {}",token);
             // 토큰 검사하기. JWT이므로 인가 서버에 요청 하지 않고도 검증 가능.
             if (token != null && !token.equalsIgnoreCase("null")) {
                 // userEmail 가져오기. 위조 된 경우 예외 처리 된다.
@@ -51,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String parseCookie(HttpServletRequest request){
+    public String parseCookie(HttpServletRequest request){
         String bearerToken = request.getHeader("Set-Cookie");
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("access_token")) {
