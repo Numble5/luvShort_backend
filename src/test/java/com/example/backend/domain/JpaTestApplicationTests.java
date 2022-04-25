@@ -6,6 +6,7 @@ import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.domain.user.enums.SocialAccountType;
 import com.example.backend.domain.video.Video;
+import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoRepository;
 import org.junit.After;
@@ -67,4 +68,20 @@ public class JpaTestApplicationTests {
         videoRepository.save(video);
 
     }
+    //  @Test
+//    public void videoSave(){
+//
+//        Video video = Video.builder()
+//                .title("워녕")
+//                .content("나르시시스트")
+//                .hits(0L)
+//                .uploader(userRepository.getById(1L))
+//                .videoType(VideoType.EMBED)
+//                .build();
+//
+//        videoRepository.save(video);
+//
+//    }
+
+
 }
