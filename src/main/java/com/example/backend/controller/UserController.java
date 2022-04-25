@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +43,14 @@ public class UserController {
         response.addCookie(cookie);
         // 2.
         return userService.createUser(signUpRequestDto);
+    }
+
+    @GetMapping("/signup/nickname-authenticated/{nickname}")
+    public Boolean checkNickname(@PathVariable("nickname") String nickname){
+        if(userRepository.existsByNickname(nickname)){
+            return true;
+        }
+        return false;
     }
 
     // NOTE: JWT 기반 로그인은 모든 요청마다 사용자를 검증하는 방식으로 구현함 (세션과의 차이점)
