@@ -10,11 +10,10 @@ import org.springframework.web.filter.CorsFilter;
 import com.example.backend.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor
 @EnableWebSecurity
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    
+
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -24,17 +23,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors() // WebMvcConfig에서 이미 설정했으므로 기본 cors 설정.
                 .and()
                 .csrf()// csrf는 현재 사용하지 않으므로 disable
-                    .disable()
+                .disable()
                 .httpBasic()// token을 사용하므로 basic 인증 disable
-                    .disable()
+                .disable()
                 .sessionManagement()  // session 기반이 아님을 선언
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/api/auth/**", "**/api/videos/**").permitAll(); // /와 /api/auth/kakao-login/** 경로는 인증 안해도 됨.
-        .anyRequest() // /와 /auth/**이외의 모든 경로는 인증 해야됨.
-        .authenticated();
-        
+                .antMatchers("/", "/api/auth/**", "**/api/videos/**").permitAll() // /와 /api/auth/kakao-login/** 경로는 인증 안해도 됨.
+                .anyRequest() // /와 /auth/**이외의 모든 경로는 인증 해야됨.
+                .authenticated();
+
         // filter 등록
         // 매 요청마다
         // CorsFilter 실행한 후에
@@ -43,8 +42,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 jwtAuthenticationFilter,
                 CorsFilter.class
         );
-         
-
 
     }
 }
