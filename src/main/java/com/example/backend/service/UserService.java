@@ -1,17 +1,22 @@
 package com.example.backend.service;
 
 import com.example.backend.domain.user.User;
-import com.example.backend.dto.signup.SignUpRequestDto;
-import com.example.backend.dto.signup.SignUpResponseDto;
-import com.example.backend.exception.ReturnCode;
-import com.example.backend.jwt.TokenProvider;
+import com.example.backend.domain.user.dto.SignUpRequestDto;
+import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.security.TokenProvider;
 import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 
 @Slf4j
@@ -23,45 +28,30 @@ public class UserService {
     private final TokenProvider tokenProvider;
 
     // User 엔티티 만들고 레포지토리에 저장
-    // 1. 프론트로부터 받은 jwt로 이메일 디코딩해서 사용자 검증
-    // 2. signUpDto를 User 엔티티로 변환
-    // 3. 관심사 추가
-    // 4. 레포지토리에 저장
+    // 1. signUpDto를 User 엔티티로 변환
+    // 2. 관심사 추가
+    // 3. 레포지토리에 저장
     @Transactional
     public SignUpResponseDto createUser(SignUpRequestDto signUpRequestDto){
-        // 1.
-        String email = tokenProvider.getEmailfromJwt(signUpRequestDto.getJwt());
-        if(email.equals("forged")){
-            return SignUpResponseDto.builder().status(400).build();
-        }
-        log.info("email: {}", email);
+
         // 2.
-        User user = signUpRequestDto.toEntity();
-        // TODO: 관심사 추가
-        userRepository.save(user);
+        User user = signUpRequestDto.toEntity(); // 1.
+        // TODO: 2. 관심사 추가
+        userRepository.save(user); //3.
         return SignUpResponseDto.builder()
                 .nickname(user.getNickname())
-                .jwt(signUpRequestDto.getJwt())
                 .status(200).build();
+
     }
 
     // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
     // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
-    public ResponseEntity<?> signUpOrSignin(String email, String jwt){
-        // 1. step1으로 이동
-        log.info("jwt: {}",jwt);
-        if(!userRepository.existsByEmail(email)){
-            JSONObject reponseBody = new JSONObject();
-            reponseBody.put("jwt", jwt);
-            reponseBody.put("redirectUrl", "/step1");
-            return ResponseEntity.ok().body(reponseBody);
+    public Boolean alreadySignUp(String email){
+        if(userRepository.existsByEmail(email)){
+            return true;
         }
-        // 2. 메인페이지로 이동
-        else{
-            JSONObject reponseBody = new JSONObject();
-            reponseBody.put("jwt", jwt);
-            reponseBody.put("redirectUrl", "/");
-            return ResponseEntity.ok().body(reponseBody);
-        }
+        return false;
     }
+
+
 }

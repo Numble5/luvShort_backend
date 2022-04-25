@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // 해당 이메일이 User 엔티티에 있는지 확인
     Boolean existsByEmail(String email);
 
+    Boolean existsByNickname(String nickname);
+
     // FIXME: JPQL문 맞는지 확인 안해봄
     @Query("select (count(u) = 1) from User u where u.userInfo.socialAccountType = :socialAccountType and u.userInfo.socialId = :socialId")
     Boolean existsBySocialAccountTypeAndSocialId(SocialAccountType socialAccountType, Long socialId);

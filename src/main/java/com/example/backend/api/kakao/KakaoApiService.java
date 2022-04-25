@@ -1,7 +1,7 @@
 package com.example.backend.api.kakao;
 
-import com.example.backend.config.auth.dto.KakaoAccount;
-import com.example.backend.config.auth.dto.KakaoUserInfo;
+import com.example.backend.api.kakao.dto.KakaoAccount;
+import com.example.backend.api.kakao.dto.KakaoUserInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

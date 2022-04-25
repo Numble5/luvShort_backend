@@ -1,4 +1,4 @@
-package com.example.backend.config.auth.dto;
+package com.example.backend.api.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
