@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 @Slf4j
@@ -31,9 +33,19 @@ public class UserController {
     private final UserRepository userRepository;
 
     // 시작하기 버튼을 눌러 회원가입을 완료한다
+    // 1. 이때 프론트에서 보내준 이메일로 jwt를 만들어 쿠키를 만들고, 응답에 추가한다.
+    // 2. signUpRequestDto으로 User 엔티티를 만든다.
     @PostMapping("/signup")
-    public SignUpResponseDto signup(HttpServletRequest request, @RequestBody SignUpRequestDto signUpRequestDto) throws BackendException {
-        return userService.createUser(request.getCookies(),signUpRequestDto);
+    public SignUpResponseDto signup(HttpServletResponse response, @RequestBody SignUpRequestDto signUpRequestDto) throws BackendException {
+
+        // 1.
+        Cookie cookie = new Cookie("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()));
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+        // 2.
+        return userService.createUser(signUpRequestDto);
     }
 
     // NOTE: JWT 기반 로그인은 모든 요청마다 사용자를 검증하는 방식으로 구현함 (세션과의 차이점)

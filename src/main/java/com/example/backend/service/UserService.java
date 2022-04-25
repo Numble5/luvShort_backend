@@ -28,31 +28,24 @@ public class UserService {
     private final TokenProvider tokenProvider;
 
     // User 엔티티 만들고 레포지토리에 저장
-    // 1. 프론트로부터 받은 jwt로 이메일 디코딩해서 사용자 검증
-    // 2. signUpDto를 User 엔티티로 변환
-    // 3. 관심사 추가
-    // 4. 레포지토리에 저장
-
+    // 1. signUpDto를 User 엔티티로 변환
+    // 2. 관심사 추가
+    // 3. 레포지토리에 저장
     @Transactional
-    public SignUpResponseDto createUser(Cookie[] cookies, SignUpRequestDto signUpRequestDto){
-        // 1.
-        log.info("Cookies: {}", Arrays.toString(cookies));
+    public SignUpResponseDto createUser(SignUpRequestDto signUpRequestDto){
 
         // 2.
-        User user = signUpRequestDto.toEntity();
-        // TODO: 관심사 추가
-        userRepository.save(user);
+        User user = signUpRequestDto.toEntity(); // 1.
+        // TODO: 2. 관심사 추가
+        userRepository.save(user); //3.
         return SignUpResponseDto.builder()
                 .nickname(user.getNickname())
                 .status(200).build();
 
-
     }
-
 
     // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
     // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
-
     public Boolean alreadySignUp(String email){
         if(userRepository.existsByEmail(email)){
             return true;

@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SignUpRequestDto {
 
+    private String email;
     private String nickname;
     private int age;
     private GenderType gender;
@@ -26,6 +27,7 @@ public class SignUpRequestDto {
     public User toEntity() {
 
         return User.builder()
+                .email(email)
                 .nickname(nickname)
                 .userInfo( // 임베디드타입
                         UserInfo

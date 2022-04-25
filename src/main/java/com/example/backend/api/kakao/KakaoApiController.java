@@ -33,13 +33,17 @@ public class KakaoApiController {
     // 1. 프론트에서 받은 accessToken으로 사용자 정보를 받아 KakaoAccount에 저장하고 이메일을 리턴
     // 2. 이메일을 받아오지 못하면 에러 리턴
     // 3. luvShort만의 jwt 만들기
-    // 4. 쿠키 설정
-    // 5. 회원가입 또는 로그인 진행
+    // 4. 회원가입 또는 로그인 진행
     @PostMapping
     public ResponseEntity<?> kakaoLogin(@RequestBody JSONObject jsonObject, HttpServletResponse response) throws IOException {
 
         log.info("accessToken: {}", jsonObject); //ok accessToken: {"access_token":"rLdYAqQVdVdjbk29pac8ZQ3PHL-cxdM_yy1ISAo9dJgAAAGAUQ9Phw"}
         String accessToken = jsonObject.getAsString("access_token");// value만 추출해야함
+
+        // accessToken 못받으면 에러 처리
+        if (accessToken==null){
+            return new ResponseEntity<>("{}", HttpStatus.BAD_REQUEST);
+        }
         // 1.
         String email = kakaoApiService.getUserEmailByAccessToken(accessToken);
 
@@ -52,25 +56,27 @@ public class KakaoApiController {
         String jwt = tokenProvider.createJws(email); // ok
         log.info("jwt: {}",jwt);
 
-        // 4. 쿠키 설정
-        Cookie cookie = new Cookie("jwt", jwt);
-        cookie.setMaxAge(7 * 24 * 60 * 60);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
         // 5.
         JSONObject reponseBody = new JSONObject();
-        // 이미 회원가입을 했으면 메인화면으로 이동
+        // 이미 회원가입을 했으면 쿠키 만들고 메인화면으로 이동
         if(userService.alreadySignUp(email)){
+            // 쿠키 설정
+            Cookie cookie = new Cookie("access_token", jwt);
+            cookie.setMaxAge(7 * 24 * 60 * 60);
+            cookie.setSecure(true);
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+
             reponseBody.put("redirectUrl", "/");
+            return ResponseEntity.ok().body(reponseBody);
         }
         // 회원가입을 하지 않았으면 step1으로 이동
         else{
             reponseBody.put("redirectUrl", "/step1");
+            return ResponseEntity.ok().body(reponseBody);
         }
 
-        response.addCookie(cookie);
-        return ResponseEntity.ok().body(reponseBody);
+
 
     }
 }
