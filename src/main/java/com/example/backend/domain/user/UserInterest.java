@@ -1,6 +1,7 @@
 package com.example.backend.domain.user;
 
 import com.example.backend.domain.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class UserInterest extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interest_idx")
     private Interest interest;
+
+    public UserInterest(User user, Interest interest) {
+        this.user = user;
+        this.interest = interest;
+    }
+
 }

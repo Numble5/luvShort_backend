@@ -1,12 +1,11 @@
 package com.example.backend.api.kakao;
 
-import com.example.backend.exception.BackendException;
+import com.example.backend.domain.dto.Message;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.TokenProvider;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice;
 import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
+
 
 
 @Slf4j
@@ -41,14 +40,14 @@ public class KakaoApiController {
 
         // accessToken 못받으면 에러 처리
         if (accessToken==null){
-            return new ResponseEntity<>("{}", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new Message(ReturnCode.FAIL_TO_GET_KAKAO_ACCESS_TOKEN_INFO, null), HttpStatus.OK);
         }
         // 1.
         String email = kakaoApiService.getUserEmailByAccessToken(accessToken);
 
         // 2.
         if (email.equals("Error")){
-            return new ResponseEntity<>("{}", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new Message(ReturnCode.FAIL_TO_GET_KAKAO_ACCOUNT, null), HttpStatus.OK);
         }
 
         // 3. (회원가입, 로그인 상관없이)
@@ -56,7 +55,6 @@ public class KakaoApiController {
         log.info("jwt: {}",jwt);
 
         // 5.
-        JSONObject reponseBody = new JSONObject();
         // 이미 회원가입을 했으면 쿠키 만들고 메인화면으로 이동
         if(userService.alreadySignUp(email)){
             // 쿠키 설정
@@ -65,14 +63,11 @@ public class KakaoApiController {
             cookie.setSecure(true);
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
-
-            reponseBody.put("redirectUrl", "/");
-            return ResponseEntity.ok().body(reponseBody);
+            return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, "/"), HttpStatus.OK);
         }
         // 회원가입을 하지 않았으면 step1으로 이동
         else{
-            reponseBody.put("redirectUrl", "/step1");
-            return ResponseEntity.ok().body(reponseBody);
+            return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, "/step1"), HttpStatus.OK);
         }
 
 
