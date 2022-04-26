@@ -26,5 +26,4 @@ public class Interest extends BaseEntity {
     public Interest(String interestName){
         this.interestName = interestName;
     }
-
 }
