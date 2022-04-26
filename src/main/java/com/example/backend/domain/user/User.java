@@ -23,11 +23,9 @@ public class User extends BaseEntity {
     @Column(name = "user_idx")
     private Long idx;
 
-    @Column(nullable = false)
+    //@Column(nullable = false)
     private String email;
     private String nickname;
-
-    private String profileImg;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType; // 각 사용자의 권한(관리자/일반회원)을 관리할 Enum 클래스
@@ -43,7 +41,7 @@ public class User extends BaseEntity {
     private Profile profile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserInterest> interests = new LinkedList<>();
+    private List<UserInterest> userInterests = new LinkedList<>();
 
     @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY)
     private List<Video> myVideos = new LinkedList<>();
@@ -58,8 +56,10 @@ public class User extends BaseEntity {
         this.profile = profile;
     }
 
-    public void addInterest(UserInterest userInterest){
-        this.interests.add(userInterest);
+
+    // 관심사 추가
+    public void addInterests(List<UserInterest> userInterests){
+        this.userInterests = userInterests;
     }
 
     public void addMyVideo(Video myVideo){

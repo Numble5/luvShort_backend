@@ -35,7 +35,7 @@ public class VideoService {
                    .createdDate(v.getCreatedDate())
                    .updatedDate(v.getUpdatedDate())
                    .nickname(v.getUploader().getNickname())
-                   .profileImgUrl(v.getUploader().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
+                   .profileImgUrl(v.getUploader().getProfile().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
                    .build();
            responseVideoInfoList.add(info);
         }
