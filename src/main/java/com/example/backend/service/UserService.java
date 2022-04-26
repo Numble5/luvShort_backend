@@ -5,6 +5,8 @@ import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
+import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.InterestRepository;
@@ -17,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -91,6 +95,13 @@ public class UserService {
             return true;
         }
         return false;
+    }
+
+    // userId -> user info 전체 return
+    public UserInfo getUserInfoById(Long userId) {
+        Optional<User> findByIdUser = userRepository.findById(userId);
+        if(!findByIdUser.isPresent()) return null;
+        return findByIdUser.get().getUserInfo();
     }
 
     public ResponseEntity<?> getUserInfoByJwt(String accessToken){

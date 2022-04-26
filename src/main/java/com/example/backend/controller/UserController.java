@@ -3,6 +3,9 @@ package com.example.backend.controller;
 import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
+import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
+import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.JwtAuthenticationFilter;
@@ -112,6 +115,16 @@ public class UserController {
         }
         */
         return new ResponseEntity<>("{}",HttpStatus.OK);
+    }
+
+    // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
+    @GetMapping("/user/{idx}")
+    ResponseEntity<Message> userInfo(@PathVariable("idx") Long userId) {
+        UserInfo userInfo = userService.getUserInfoById(userId);
+
+        if(userInfo == null)
+            return new ResponseEntity<>(new Message(ReturnCode.USER_NOT_FOUND, null), HttpStatus.OK);
+        return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, userInfo),HttpStatus.OK);
     }
 
 
