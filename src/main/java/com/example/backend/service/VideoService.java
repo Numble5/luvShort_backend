@@ -1,10 +1,16 @@
 package com.example.backend.service;
 
 
+import com.example.backend.domain.dto.Message;
+import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.domain.video.dto.VideoFilterRequest;
+import com.example.backend.domain.video.dto.VideoUploadDto;
+import com.example.backend.domain.video.enums.VideoType;
+import com.example.backend.exception.ReturnCode;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoCategoryRepository;
 import com.example.backend.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,32 +30,34 @@ import java.util.stream.Collectors;
 public class VideoService {
     private final VideoRepository videoRepository;
     private final VideoCategoryRepository videoCategoryRepository;
+    private final UserRepository userRepository;
 
-    public List<ResponseVideoInfo> makeResVideoInfoList(List<Video> videoList) {
-        List<ResponseVideoInfo> responseVideoInfoList = new ArrayList<>();
-        for(Video v: videoList){
-            ResponseVideoInfo info = ResponseVideoInfo.builder()
-                    .idx(v.getIdx())
-                    .content(v.getContent())
-                    .title(v.getTitle())
-                    .videoType(v.getVideoType())
-                    .videoUrl(v.getVideoUrl())
-                    .thumbnailUrl(v.getThumbnailUrl())
-                    .hits(v.getHits())
-                    .createdDate(v.getCreatedDate())
-                    .updatedDate(v.getUpdatedDate())
-                    .nickname(v.getUploader().getNickname())
-                    .profileImgUrl(v.getUploader().getProfile().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
-                    .build();
-            responseVideoInfoList.add(info);
-        }
-        return responseVideoInfoList;
+    public ResponseVideoInfo makeResVideoInfo(Video v) {
+        //List<ResponseVideoInfo> responseVideoInfoList = new ArrayList<>();
+        ResponseVideoInfo info = ResponseVideoInfo.builder()
+                .idx(v.getIdx())
+                .content(v.getContent())
+                .title(v.getTitle())
+                .videoType(v.getVideoType())
+                .videoUrl(v.getVideoUrl())
+                .thumbnailUrl(v.getThumbnailUrl())
+                .hits(v.getHits())
+                .createdDate(v.getCreatedDate())
+                .updatedDate(v.getUpdatedDate())
+                .nickname(v.getUploader().getNickname())
+                .profileImgUrl(v.getUploader().getProfile().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
+                .build();
+        return info;
     }
 
     @Transactional
     public List<ResponseVideoInfo> getAllVideo(){
         List<Video> videoList = videoRepository.findAll(); // 전체 비디오 목록
-        return makeResVideoInfoList(videoList);
+        List<ResponseVideoInfo> dtoList = new ArrayList<>();
+        for(Video v: videoList){
+            dtoList.add(makeResVideoInfo(v));
+        }
+        return dtoList;
     }
 
     @Transactional
@@ -91,7 +99,11 @@ public class VideoService {
                 filteredCom.add(v);
 
             }
-            return makeResVideoInfoList(filteredCom);
+            List<ResponseVideoInfo> dtoList = new ArrayList<>();
+            for(Video v: filteredCom){
+                dtoList.add(makeResVideoInfo(v));
+            }
+            return dtoList;
         }
         // 2.2 비디오 존재하지 않는 경우
         else{
@@ -99,5 +111,29 @@ public class VideoService {
         }
 
 
+    }
+
+    @Transactional
+    public Message saveVideo(VideoUploadDto uploadDto) {
+        // uploader 찾기
+        Optional<User> user = userRepository.findByEmail(uploadDto.getEmail());
+
+        // uploader 존재하지 않을 경우
+        if(!user.isPresent()) return new Message(ReturnCode.USER_NOT_FOUND,null);
+
+        // 비디오 생성
+        Video video = Video.builder()
+                .title(uploadDto.getTitle())
+                .content(uploadDto.getContent())
+                .hits(0L)
+                .thumbnailUrl(uploadDto.getThumbUrl())
+                .videoUrl(uploadDto.getVideoUrl())
+                .uploader(user.get())
+                .videoType(VideoType.valueOf(uploadDto.getVideoType()))
+        .build();
+
+        videoRepository.save(video);
+
+        return new Message(ReturnCode.SUCCESS,makeResVideoInfo(video));
     }
 }

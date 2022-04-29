@@ -1,5 +1,6 @@
 package com.example.backend.controller;
 
+import com.example.backend.service.S3Service;
 import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.domain.video.dto.VideoFilterRequest;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ import java.util.List;
 public class VideoController {
 
     private final VideoService videoService;
+    private final S3Service s3Service;
 
     @RequestMapping(value="/videos",method = RequestMethod.GET)
     public ResponseEntity<Message> videoList() {
@@ -33,10 +36,13 @@ public class VideoController {
     }
 
     /** 비디오 업로드 **/
-//    @PostMapping("/api/videos/upload/new")
-//    public ResponseEntity<Message> uploadFileAndInfo(@RequestBody VideoUploadDto requestInfo)
-//    {
-//        videoService.save(requestInfo);
-//        return null;
-//    }
+    @PostMapping("/videos/upload/new")
+    public ResponseEntity<Message> uploadFileAndInfo(@RequestPart(value = "info") VideoUploadDto requestInfo, MultipartFile videoFile,MultipartFile thumbFile) throws IOException {
+        String videoPath = videoFile.isEmpty() ?  "" : s3Service.upload(videoFile,"short-video");
+        String thumbPath = thumbFile.isEmpty() ? "": s3Service.upload(thumbFile,"video-thumbnail");
+        requestInfo.setVideoUrl(videoPath);
+        requestInfo.setThumbUrl(thumbPath);
+        return new ResponseEntity<>(videoService.saveVideo(requestInfo),HttpStatus.OK);
+    }
+
 }

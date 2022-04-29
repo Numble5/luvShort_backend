@@ -119,7 +119,7 @@ public class UserController {
 
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
     @GetMapping("/user/{idx}")
-    ResponseEntity<Message> userInfo(@PathVariable("idx") Long userId) {
+    public ResponseEntity<Message> userInfo(@PathVariable("idx") Long userId) {
         UserInfo userInfo = userService.getUserInfoById(userId);
 
         if(userInfo == null)
