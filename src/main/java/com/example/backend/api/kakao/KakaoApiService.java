@@ -78,7 +78,7 @@ public class KakaoApiService {
             return kakaoAccount.getEmail();
 
         } catch (RestClientException | JsonProcessingException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return "Error";
         }
 
