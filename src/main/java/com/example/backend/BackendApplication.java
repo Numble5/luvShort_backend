@@ -23,19 +23,4 @@ public class BackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);
     }
-
-    @Transactional
-    @Bean
-    public CommandLineRunner runner(InterestRepository interestRepository) {
-        return (args) -> {
-
-            // Interest 엔티티 추가
-            String[] interests = new String[]{"여행", "쇼핑", "스포츠", "영화", "게임", "음악", "반려동물", "독서", "요리"};
-            for (String i: interests){
-                Interest interest = interestRepository.save(Interest.builder()
-                        .interestName(i)
-                        .build());
-            }
-        };
-    }
 }
