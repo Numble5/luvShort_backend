@@ -1,5 +1,6 @@
 package com.example.backend.api.kakao;
 
+import com.example.backend.api.kakao.dto.RedirectUrlResponse;
 import com.example.backend.domain.dto.Message;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.TokenProvider;
@@ -40,14 +41,14 @@ public class KakaoApiController {
 
         // accessToken 못받으면 에러 처리
         if (accessToken==null){
-            return new ResponseEntity<>(new Message(ReturnCode.FAIL_TO_GET_KAKAO_ACCESS_TOKEN_INFO, null), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         // 1.
         String email = kakaoApiService.getUserEmailByAccessToken(accessToken);
 
         // 2.
         if (email.equals("Error")){
-            return new ResponseEntity<>(new Message(ReturnCode.FAIL_TO_GET_KAKAO_ACCOUNT, null), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // 3. (회원가입, 로그인 상관없이)
@@ -63,11 +64,12 @@ public class KakaoApiController {
             cookie.setSecure(true);
             cookie.setHttpOnly(true);
             response.addCookie(cookie);
-            return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, "/"), HttpStatus.OK);
+
+            return new ResponseEntity<>(new RedirectUrlResponse("/"), HttpStatus.OK);
         }
         // 회원가입을 하지 않았으면 step1으로 이동
         else{
-            return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, "/step1"), HttpStatus.OK);
+            return new ResponseEntity<>(new RedirectUrlResponse("/step1"), HttpStatus.OK);
         }
 
 

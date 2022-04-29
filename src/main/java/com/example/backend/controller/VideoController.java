@@ -3,7 +3,6 @@ package com.example.backend.controller;
 import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.domain.video.dto.VideoFilterRequest;
-import com.example.backend.domain.video.dto.VideoUploadDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.service.VideoService;
 import lombok.RequiredArgsConstructor;
