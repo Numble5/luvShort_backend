@@ -107,15 +107,15 @@ public class UserService {
     public ResponseEntity<?> getUserInfoByJwt(String accessToken){
         String email = tokenProvider.getEmailfromJwt(accessToken);
         if(email.equals("forged")){
-            return new ResponseEntity<>(new Message(ReturnCode.INVALID_COOKIE,null), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Optional<User> user = userRepository.findByEmail(email);
         // 엔티티 객체 없으면 있으면 유저정보 리턴
         // 없으면 null 리턴
         if (user.isPresent()){
-            return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, new UserReponseDtoByCookie(user.get())), HttpStatus.OK);
+            return new ResponseEntity<>(new UserReponseDtoByCookie(user.get()), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new Message(ReturnCode.INTERNAL_SERVER_ERROR, null), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
 }

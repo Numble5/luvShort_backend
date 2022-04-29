@@ -1,26 +1,19 @@
 package com.example.backend.domain;
 
-import com.example.backend.BackendApplication;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
-import com.example.backend.domain.user.enums.SocialAccountType;
 import com.example.backend.domain.video.Video;
-import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoRepository;
-import org.junit.After;
+import com.example.backend.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,6 +27,9 @@ public class JpaTestApplicationTests {
 
     @Autowired
     VideoRepository videoRepository;
+
+    @Autowired
+    UserService userService;
 
     /*
     @After
@@ -68,6 +64,34 @@ public class JpaTestApplicationTests {
         videoRepository.save(video);
 
     }
+
+    /* FAIL
+    @Test
+    public void User엔티티저장할때_UserInterest도_저장되는지_확인(){
+        List<String> selectedInterests = new LinkedList<>();
+        selectedInterests.add("쇼핑");
+        selectedInterests.add("스포츠");
+        SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
+                .email("syhan97@naver.com")
+                .nickname("한승윤")
+                .birthday("19970821")
+                .gender("FEMALE")
+                .city("서울")
+                .district("용산구")
+                .SelectedInterests(selectedInterests)
+                        .build();
+
+        // User 엔티티 저장하기
+        userService.createUser(signUpRequestDto);
+
+        // FAIL query did not return a unique result: 2
+        User user = userRepository.findByEmail("syhan97@naver.com").get();
+
+        user.getUserInterests().forEach(userInterest -> System.out.println(userInterest.getInterest().getInterestName()));
+
+    }
+     */
+
     //  @Test
 //    public void videoSave(){
 //
