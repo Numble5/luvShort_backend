@@ -15,6 +15,8 @@ import com.example.backend.repository.VideoCategoryRepository;
 import com.example.backend.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -114,12 +116,12 @@ public class VideoService {
     }
 
     @Transactional
-    public Message saveVideo(VideoUploadDto uploadDto) {
+    public ResponseEntity<?> saveVideo(VideoUploadDto uploadDto) {
         // uploader 찾기
         Optional<User> user = userRepository.findByEmail(uploadDto.getEmail());
 
         // uploader 존재하지 않을 경우
-        if(!user.isPresent()) return new Message(ReturnCode.USER_NOT_FOUND,null);
+        if(!user.isPresent()) return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
         // 비디오 생성
         Video video = Video.builder()
@@ -134,6 +136,6 @@ public class VideoService {
 
         videoRepository.save(video);
 
-        return new Message(ReturnCode.SUCCESS,makeResVideoInfo(video));
+        return new ResponseEntity<>(makeResVideoInfo(video),HttpStatus.OK);
     }
 }
