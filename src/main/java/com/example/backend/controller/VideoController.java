@@ -29,6 +29,14 @@ public class VideoController {
         return new ResponseEntity<>(videoService.getAllVideo(), HttpStatus.OK);
     }
 
+    /** 비디오 목록 페이지네이션**/
+    @GetMapping("/videos/paging")
+    public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size) {
+        List<ResponseVideoInfo> videoInfos = videoService.fetchVideoPagesBy(lastVideoId,size);
+        return new ResponseEntity<>(videoInfos,HttpStatus.OK);
+    }
+
+
     @PostMapping(value="/videos/filter")
     public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request) {
         List<ResponseVideoInfo> filtered = videoService.filteringVideo(request);

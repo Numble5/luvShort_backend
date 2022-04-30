@@ -15,6 +15,10 @@ import com.example.backend.repository.VideoCategoryRepository;
 import com.example.backend.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,7 +58,7 @@ public class VideoService {
 
     @Transactional
     public List<ResponseVideoInfo> getAllVideo(){
-        List<Video> videoList = videoRepository.findAll(); // 전체 비디오 목록
+        List<Video> videoList = videoRepository.findAllBy(); // 전체 비디오 목록
         List<ResponseVideoInfo> dtoList = new ArrayList<>();
         for(Video v: videoList){
             dtoList.add(makeResVideoInfo(v));
@@ -62,6 +66,20 @@ public class VideoService {
         return dtoList;
     }
 
+    @Transactional
+    public List<ResponseVideoInfo> fetchVideoPagesBy(Long lastVideoId,int size) {
+        if(lastVideoId == 0L) { // 첫 요청의 경우 0-> 가장 큰 idx + 1로 최신것 size 갯수만큼
+            lastVideoId = videoRepository.findTop1ByOrderByIdxDesc().getIdx() + 1;
+        }
+        PageRequest pageRequest = PageRequest.of(0,size, Sort.by("idx").descending()); // 페이지네이션 위해, 페이지는 항상 0으로 고정
+        Page<Video> fetchedVideo = videoRepository.findByIdxLessThan(lastVideoId,pageRequest); // id 작으면 최신 -> 작은 순 정렬 && 마지막보다 작은것 size 만큼
+        List<ResponseVideoInfo> dtoList = new ArrayList<>();
+        for(Video v: fetchedVideo.getContent()){
+            dtoList.add(makeResVideoInfo(v));
+        }
+        return dtoList;
+
+    }
     @Transactional
     public List<ResponseVideoInfo> filteringVideo(VideoFilterRequest request) {
         // return type
