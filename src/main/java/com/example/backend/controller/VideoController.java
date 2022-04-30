@@ -29,7 +29,7 @@ public class VideoController {
         return new ResponseEntity<>(videoService.getAllVideo(), HttpStatus.OK);
     }
 
-    @GetMapping(value="/videos/filter")
+    @PostMapping(value="/videos/filter")
     public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request) {
         List<ResponseVideoInfo> filtered = videoService.filteringVideo(request);
         return new ResponseEntity<>(filtered,HttpStatus.OK);
