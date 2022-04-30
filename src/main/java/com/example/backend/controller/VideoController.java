@@ -38,6 +38,7 @@ public class VideoController {
     /** 비디오 업로드 **/
     @PostMapping("/videos/upload/new")
     public ResponseEntity<?> uploadFileAndInfo(@RequestPart(value = "info") VideoUploadDto requestInfo, MultipartFile videoFile, MultipartFile thumbFile) throws IOException {
+
         String videoPath = videoFile.isEmpty() ?  "" : s3Service.upload(videoFile,"short-video");
         String thumbPath = thumbFile.isEmpty() ? "": s3Service.upload(thumbFile,"video-thumbnail");
         requestInfo.setVideoUrl(videoPath);
