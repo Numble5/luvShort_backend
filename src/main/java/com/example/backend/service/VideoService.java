@@ -24,10 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -66,6 +63,12 @@ public class VideoService {
         return dtoList;
     }
 
+    @Transactional
+    public ResponseVideoInfo getVideoDto(Long videoIdx) throws Exception{
+        Video video = videoRepository.findByIdx(videoIdx)
+                .orElseThrow(() -> new IllegalArgumentException("해당 문제가 존재하지 않습니다."));
+        return makeResVideoInfo(video);
+    }
     @Transactional
     public List<ResponseVideoInfo> fetchVideoPagesBy(Long lastVideoId,int size) {
         if(lastVideoId == 0L) { // 첫 요청의 경우 0-> 가장 큰 idx + 1로 최신것 size 갯수만큼
