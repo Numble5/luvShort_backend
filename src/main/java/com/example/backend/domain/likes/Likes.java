@@ -1,6 +1,7 @@
 package com.example.backend.domain.likes;
 
 import com.example.backend.domain.BaseEntity;
+import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.Video;
 import lombok.Getter;
@@ -25,6 +26,11 @@ public class Likes extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_idx")
     private Video likeVideo;
+
+    public Likes(User user, Video video) {
+        this.likeUser = user;
+        this.likeVideo = video;
+    }
 
 
 }

@@ -23,6 +23,7 @@ public class User extends BaseEntity {
     @Column(name = "user_idx")
     private Long idx;
 
+    //@Column(nullable = false)
     private String email;
     private String nickname;
 
@@ -40,7 +41,7 @@ public class User extends BaseEntity {
     private Profile profile;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserInterest> interests = new LinkedList<>();
+    private List<UserInterest> userInterests = new LinkedList<>();
 
     @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY)
     private List<Video> myVideos = new LinkedList<>();
@@ -50,9 +51,15 @@ public class User extends BaseEntity {
         this.email = email;
         this.nickname = nickname;
         this.roleType = roleType;
-        this.status = UserStatus.NORMAL; // 처음 등록한 회원은 무조건 정상회원
+        this.status = status;
         this.userInfo = userInfo;
         this.profile = profile;
+    }
+
+
+    // 관심사 추가
+    public void addInterests(List<UserInterest> userInterests){
+        this.userInterests = userInterests;
     }
 
     public void addMyVideo(Video myVideo){
