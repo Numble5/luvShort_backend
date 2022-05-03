@@ -2,20 +2,23 @@ package com.example.backend.api.kakao;
 
 import com.example.backend.api.kakao.dto.RedirectUrlResponse;
 import com.example.backend.domain.dto.Message;
+import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.TokenProvider;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+import java.net.URI;
 
 
 @Slf4j
@@ -58,14 +61,20 @@ public class KakaoApiController {
         // 5.
         // 이미 회원가입을 했으면 쿠키 만들고 메인화면으로 이동
         if(userService.alreadySignUp(email)){
+
             // 쿠키 설정
-            Cookie cookie = new Cookie("access_token", jwt);
-            cookie.setMaxAge(7 * 24 * 60 * 60);
-            cookie.setSecure(true);
-            cookie.setHttpOnly(true);
-            response.addCookie(cookie);
+            ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
+                    .httpOnly(true)
+                    .secure(true)
+                    .maxAge(7 * 24 * 60 * 60)
+                    .sameSite("None")
+                    .build();
+            response.setHeader("Set-Cookie", responseCookie.toString());
+            //response.setHeader("Set-Cookie", "key=value; HttpOnly; SameSite=None");
+
 
             return new ResponseEntity<>(new RedirectUrlResponse("/"), HttpStatus.OK);
+
         }
         // 회원가입을 하지 않았으면 step1으로 이동
         else{
