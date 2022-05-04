@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.domain.video.dto.VideoUploadDto;
+import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.service.S3Service;
 import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
@@ -49,13 +50,23 @@ public class VideoController {
     }
 
     /** 비디오 업로드 **/
-    @PostMapping("/videos/upload/new")
+
+    /** 임베드 영상 업로드 -> 유튜브 영상 주소 저장 **/
+    @PostMapping("/videos/upload/embed")
+    public ResponseEntity<?> uploadEmbeded(@RequestBody VideoUploadDto requestInfo) throws Exception {
+        requestInfo.setVideoType("EMBED");
+        return videoService.saveVideo(requestInfo);
+    }
+
+    /** 직접 영상 업로드 **/
+    @PostMapping("/videos/upload/direct")
     public ResponseEntity<?> uploadFileAndInfo(@RequestPart(value = "info") VideoUploadDto requestInfo, MultipartFile videoFile, MultipartFile thumbFile) throws IOException {
 
         String videoPath = videoFile.isEmpty() ?  "" : s3Service.upload(videoFile,"short-video");
         String thumbPath = thumbFile.isEmpty() ? "": s3Service.upload(thumbFile,"video-thumbnail");
         requestInfo.setVideoUrl(videoPath);
         requestInfo.setThumbUrl(thumbPath);
+        requestInfo.setVideoType("DIRECT"); // 직접 영상 업로드
         return videoService.saveVideo(requestInfo);
     }
 
