@@ -113,7 +113,12 @@ public class UserService {
         // 엔티티 객체 없으면 있으면 유저정보 리턴
         // 없으면 null 리턴
         if (user.isPresent()){
-            return new ResponseEntity<>(new UserReponseDtoByCookie(user.get()), HttpStatus.OK);
+            List<UserInterest> userInterests = userInterestRepository.findUserInterestsByUser(user.get());
+            List<String> interestStr = new LinkedList<>();
+            for(UserInterest userInterest: userInterests){
+                interestStr.add(userInterest.getInterest().getInterestName());
+            }
+            return new ResponseEntity<>(new UserReponseDtoByCookie(user.get(),interestStr), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
