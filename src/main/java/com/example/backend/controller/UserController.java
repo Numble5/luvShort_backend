@@ -105,5 +105,12 @@ public class UserController {
         return new ResponseEntity<>(userInfo,HttpStatus.OK);
     }
 
+    // 사용자 ID -> 사용자 제거 (회원탈퇴?)
+    @DeleteMapping ("/user/{idx}")
+    public ResponseEntity<?> deleteUser(@PathVariable("idx") Long idx) {
+        Boolean result = userService.deleteUser(idx);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 
 }
