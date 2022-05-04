@@ -1,6 +1,7 @@
 package com.example.backend.domain.video;
 
 import com.example.backend.domain.BaseEntity;
+import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.enums.VideoType;
 import lombok.AllArgsConstructor;
@@ -37,8 +38,17 @@ public class Video extends BaseEntity {
     @JoinColumn(name = "user_idx", nullable = false)
     private User uploader;
 
-    @OneToMany(mappedBy = "video")
+    @OneToMany(mappedBy = "video",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true) // Video 삭제시 category 관계들 고아되어 삭제
     private List<VideoCategory> Categories = new LinkedList<>(); // 해당 영상이 속한 카테고리들(여러개가능)
+
+    @OneToMany(mappedBy = "likeVideo",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private List<Likes> likesList = new LinkedList<>();
 
     @Builder
     public Video(String title, String content, Long hits, String thumbnailUrl, String videoUrl, User uploader,VideoType videoType){

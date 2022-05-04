@@ -1,6 +1,7 @@
 package com.example.backend.domain.user;
 
 import com.example.backend.domain.BaseEntity;
+import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.RoleType;
 import com.example.backend.domain.user.enums.UserStatus;
@@ -40,11 +41,22 @@ public class User extends BaseEntity {
     @JoinColumn(name = "profile_idx")
     private Profile profile;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     private List<UserInterest> userInterests = new LinkedList<>();
 
-    @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "uploader", fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     private List<Video> myVideos = new LinkedList<>();
+
+    @OneToMany(mappedBy = "likeUser", fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private List<Likes> likesList = new LinkedList<>();
+
+
 
     @Builder
     public User(String email, String nickname, RoleType roleType, UserStatus status, UserInfo userInfo, Profile profile){
@@ -66,5 +78,6 @@ public class User extends BaseEntity {
         //myVideo.setUser(this);
         this.myVideos.add(myVideo);
     }
+
 
 }
