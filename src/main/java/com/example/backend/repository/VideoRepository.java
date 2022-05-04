@@ -1,5 +1,6 @@
 package com.example.backend.repository;
 
+import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.Video;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -16,4 +17,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     Video findTop1ByOrderByIdxDesc();
 
     Optional<Video> findByIdx(Long idx);
+    Optional<Video> findByUploader(User uploader);
+
 }
