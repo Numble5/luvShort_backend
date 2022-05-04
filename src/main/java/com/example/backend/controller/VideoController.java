@@ -33,6 +33,7 @@ public class VideoController {
     public ResponseEntity<?> videoDetail(@PathVariable("idx") Long problemIdx) throws Exception {
         return new ResponseEntity<>(videoService.getVideoDto(problemIdx), HttpStatus.OK);
     }
+
     /** 비디오 목록 페이지네이션**/
     @GetMapping("/videos/paging")
     public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size) {

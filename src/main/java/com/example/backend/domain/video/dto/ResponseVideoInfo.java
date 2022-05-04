@@ -1,5 +1,6 @@
 package com.example.backend.domain.video.dto;
 
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.enums.VideoType;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class ResponseVideoInfo {
@@ -22,6 +24,8 @@ public class ResponseVideoInfo {
     private String thumbnailUrl;
     private String videoUrl;
 
+    private List<String> interest;
+
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
@@ -30,7 +34,7 @@ public class ResponseVideoInfo {
     private String profileImgUrl;
 
     @Builder
-    public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, String nickname, String profileImgUrl,LocalDateTime createdDate,LocalDateTime updatedDate) {
+    public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, String nickname, String profileImgUrl,List<String> interest,LocalDateTime createdDate,LocalDateTime updatedDate) {
         this.video_idx = idx;
         this.videoType = videoType;
         this.title = title;
@@ -38,10 +42,11 @@ public class ResponseVideoInfo {
         this.hits = hits;
         this.thumbnailUrl = thumbnailUrl;
         this.videoUrl = videoUrl;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
         this.nickname = nickname;
         this.profileImgUrl = profileImgUrl;
+        this.interest = interest;
+        this.createdDate = createdDate;
+        this.updatedDate = updatedDate;
     }
 
 }
