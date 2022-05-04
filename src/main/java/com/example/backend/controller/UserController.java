@@ -91,32 +91,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // NOTE: JWT 기반 로그인은 모든 요청마다 사용자를 검증하는 방식으로 구현함 (세션과의 차이점)
-    //  Spring Security가 모든 요청마다 서블릿 필터같은 역할을 해서 사용자 검증함
-    //  로그인할 때 사용자 검증에 쓸 token과 SignUpRequestDto 생성
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticate(@RequestBody SignUpRequestDto signUpRequestDto) {
-        /*
-        Optional<User> user = userRepository.findByEmail(signUpRequestDto.getEmail());
-        if(user.isPresent()) {
-            final String token = tokenProvider.createJws(user.get()); // 로그인 할 때 토큰 생성
-            final SignUpRequestDto responseSignInDto = SignUpRequestDto.builder()
-                    .token(token)
-                    .email(signUpRequestDto.getEmail())
-                    .build();
-            return ResponseEntity.ok().body(responseSignInDto);
-        } else {
-            ResponseDTO responseDTO = ResponseDTO.builder()
-                    .error("Login failed.")
-                    .build();
-            return ResponseEntity
-                    .badRequest()
-                    .body(responseDTO);
-        }
-        */
-        return new ResponseEntity<>("{}",HttpStatus.OK);
-    }
-
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
     @GetMapping("/user/{idx}")
     public ResponseEntity<?> userInfo(@PathVariable("idx") Long userId) {
