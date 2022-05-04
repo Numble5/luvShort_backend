@@ -2,7 +2,9 @@ package com.example.backend.service;
 
 
 import com.example.backend.domain.dto.Message;
+import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
@@ -35,6 +37,14 @@ public class VideoService {
     private final VideoCategoryRepository videoCategoryRepository;
     private final UserRepository userRepository;
 
+    public List<String> getInterestNames(List<UserInterest> userInterests) {
+        List<String> interests = new ArrayList<>();
+        if(userInterests.size() != 0) {
+            for(UserInterest userInterest: userInterests)
+            interests.add(userInterest.getInterest().getInterestName());
+        }
+        return interests;
+    }
     public ResponseVideoInfo makeResVideoInfo(Video v) {
         //List<ResponseVideoInfo> responseVideoInfoList = new ArrayList<>();
         ResponseVideoInfo info = ResponseVideoInfo.builder()
@@ -48,7 +58,8 @@ public class VideoService {
                 .createdDate(v.getCreatedDate())
                 .updatedDate(v.getUpdatedDate())
                 .nickname(v.getUploader().getNickname())
-                .profileImgUrl(v.getUploader().getProfile().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
+                .profileImgUrl(v.getUploader().getProfile() != null? v.getUploader().getProfile().getProfileImg() : "") // 임시 -> user entity 수정? profile 수정?
+                .interest(getInterestNames(v.getUploader().getUserInterests()))
                 .build();
         return info;
     }
