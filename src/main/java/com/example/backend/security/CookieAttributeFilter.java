@@ -14,9 +14,11 @@ public class CookieAttributeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.getHeaders(HttpHeaders.SET_COOKIE).forEach(cookie -> log.info("before: {}",cookie));
         chain.doFilter(request, response);
         log.info("CookieAttributeFilter");
         addSameSite(httpServletResponse , "None");
+        httpServletResponse.getHeaders(HttpHeaders.SET_COOKIE).forEach(cookie -> log.info("after: {}",cookie));
     }
 
     @Override
