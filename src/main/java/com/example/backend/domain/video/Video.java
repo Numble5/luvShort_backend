@@ -71,4 +71,7 @@ public class Video extends BaseEntity {
         uploader.getMyVideos().add(this);
     }
 
+    // 카테고리 추가
+    public void addCategories(List<VideoCategory> videoCategories) {this.Categories = videoCategories;}
+
 }
