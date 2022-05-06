@@ -61,7 +61,7 @@ public class SignUpRequestDto {
                 .userInfo( // 임베디드타입
                         UserInfo
                                 .builder()
-                                .age(convertBirthdayToAge(this.birthday))
+                                .age(Integer.parseInt(this.birthday))
                                 .genderType(GenderType.valueOf(this.gender))
                                 .city(this.city)
                                 .district(this.district)
