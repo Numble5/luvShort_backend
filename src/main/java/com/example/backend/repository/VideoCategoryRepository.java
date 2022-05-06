@@ -12,6 +12,6 @@ import java.util.Optional;
 
 public interface VideoCategoryRepository extends JpaRepository<VideoCategory, Long>  {
     // 주어진 카테고리를 가지는 dictinct 한 비디오 목록 return
-    @Query("select distinct v.video from VideoCategory v where v.category.CategoryName in (:categories)")
+    @Query("select distinct v.video from VideoCategory v where v.category.categoryName in (:categories)")
     Optional<List<Video>> findDistinctVideoInCategories(Collection categories);
 }
