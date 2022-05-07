@@ -15,14 +15,16 @@ import com.example.backend.service.UserService;
 import com.example.backend.api.kakao.KakaoApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import java.net.URI;
 
 
 @Slf4j
@@ -57,14 +59,16 @@ public class UserController {
             user.getUserInterests().forEach(userInterest -> log.info("userInterest : {}", userInterest.toString()));
 
             // 쿠키 만들고
-            Cookie cookie = new Cookie("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()));
-            cookie.setMaxAge(7 * 24 * 60 * 60);
-            cookie.setSecure(true);
-            cookie.setHttpOnly(true);
+            ResponseCookie responseCookie = ResponseCookie.from("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()))
+                                                        .httpOnly(true)
+                                                        .secure(true)
+                                                        .maxAge(7 * 24 * 60 * 60)
+                                                        .sameSite("None")
+                                                        .build();
 
-            // 응답 보내기
-            response.addCookie(cookie);
-            return new ResponseEntity<>(new SignUpResponseDto(user), HttpStatus.CREATED);
+            response.setHeader("Set-Cookie", responseCookie.toString());
+            return ResponseEntity.created(URI.create("/auth/register-submit"))
+                    .body(new SignUpResponseDto(user));
         }
         // 2-3. 한개가 아니라 0개거나 2개 이상이면 내부 서버 오류 응답
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,6 +103,13 @@ public class UserController {
         if(userInfo == null)
             return new ResponseEntity<>(userInfo, HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(userInfo,HttpStatus.OK);
+    }
+
+    // 사용자 ID -> 사용자 제거 (회원탈퇴?)
+    @DeleteMapping ("/user/{idx}")
+    public ResponseEntity<?> deleteUser(@PathVariable("idx") Long idx) {
+        Boolean result = userService.deleteUser(idx);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

@@ -1,5 +1,7 @@
 package com.example.backend.config;
 
+import com.example.backend.security.CookieAttributeFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -26,6 +28,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .maxAge(MAX_AGE_SECS);
     }
+
+
+    /*
+    @Bean
+    public FilterRegistrationBean filterBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CookieAttributeFilter());
+        return registrationBean;
+    }
+     */
+
 
 
 }

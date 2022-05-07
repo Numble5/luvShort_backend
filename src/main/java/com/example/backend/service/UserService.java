@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
@@ -113,9 +110,26 @@ public class UserService {
         // 엔티티 객체 없으면 있으면 유저정보 리턴
         // 없으면 null 리턴
         if (user.isPresent()){
-            return new ResponseEntity<>(new UserReponseDtoByCookie(user.get()), HttpStatus.OK);
+            List<UserInterest> userInterests = userInterestRepository.findUserInterestsByUser(user.get());
+            List<String> interestStr = new LinkedList<>();
+            for(UserInterest userInterest: userInterests){
+                interestStr.add(userInterest.getInterest().getInterestName());
+            }
+            return new ResponseEntity<>(new UserReponseDtoByCookie(user.get(),interestStr), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
+
+    @Transactional
+    public Boolean deleteUser(Long idx) {
+        User user = userRepository.findById(idx)
+                .orElseThrow(()-> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
+
+        userRepository.delete(user); //cascade - video, VideoCategory, userInterest,Like 다 삭제?
+
+        return true;
+
+    }
 
 }

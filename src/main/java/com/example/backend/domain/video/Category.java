@@ -18,7 +18,7 @@ public class Category extends BaseEntity {
     @Column(name = "category_idx")
     private Long idx;
 
-    private String CategoryName;
+    private String categoryName;
 
     @OneToMany(mappedBy = "category")
     List<VideoCategory> videos = new LinkedList<>(); // 해당 카테고리에 속한 영상들

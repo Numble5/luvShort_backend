@@ -2,14 +2,19 @@ package com.example.backend.service;
 
 
 import com.example.backend.domain.dto.Message;
+import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.embedded.UserInfo;
+import com.example.backend.domain.video.Category;
 import com.example.backend.domain.video.Video;
+import com.example.backend.domain.video.VideoCategory;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.domain.video.dto.VideoFilterRequest;
 import com.example.backend.domain.video.dto.VideoUploadDto;
 import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.exception.ReturnCode;
+import com.example.backend.repository.CategoryRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoCategoryRepository;
 import com.example.backend.repository.VideoRepository;
@@ -24,10 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +39,16 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final VideoCategoryRepository videoCategoryRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
+//    public List<String> getInterestNames(List<UserInterest> userInterests) {
+//        List<String> interests = new ArrayList<>();
+//        if(userInterests.size() != 0) {
+//            for(UserInterest userInterest: userInterests)
+//            interests.add(userInterest.getInterest().getInterestName());
+//        }
+//        return interests;
+//    }
     public ResponseVideoInfo makeResVideoInfo(Video v) {
         //List<ResponseVideoInfo> responseVideoInfoList = new ArrayList<>();
         ResponseVideoInfo info = ResponseVideoInfo.builder()
@@ -48,10 +59,10 @@ public class VideoService {
                 .videoUrl(v.getVideoUrl())
                 .thumbnailUrl(v.getThumbnailUrl())
                 .hits(v.getHits())
+                .categories(v.getCategories())
                 .createdDate(v.getCreatedDate())
                 .updatedDate(v.getUpdatedDate())
-                .nickname(v.getUploader().getNickname())
-                .profileImgUrl(v.getUploader().getProfile().getProfileImg()) // 임시 -> user entity 수정? profile 수정?
+                .uploader(v.getUploader())
                 .build();
         return info;
     }
@@ -66,6 +77,12 @@ public class VideoService {
         return dtoList;
     }
 
+    @Transactional
+    public ResponseVideoInfo getVideoDto(Long videoIdx) throws Exception{
+        Video video = videoRepository.findByIdx(videoIdx)
+                .orElseThrow(() -> new IllegalArgumentException("해당 문제가 존재하지 않습니다."));
+        return makeResVideoInfo(video);
+    }
     @Transactional
     public List<ResponseVideoInfo> fetchVideoPagesBy(Long lastVideoId,int size) {
         if(lastVideoId == 0L) { // 첫 요청의 경우 0-> 가장 큰 idx + 1로 최신것 size 갯수만큼
@@ -141,6 +158,7 @@ public class VideoService {
         // uploader 존재하지 않을 경우
         if(!user.isPresent()) return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
 
+
         // 비디오 생성
         Video video = Video.builder()
                 .title(uploadDto.getTitle())
@@ -153,6 +171,30 @@ public class VideoService {
         .build();
 
         videoRepository.save(video);
+
+        // 2. 사용자 입력 카테고리 존재 여부 확인
+        List<VideoCategory> videoCategories = new LinkedList<>();
+        List<String> userInput = uploadDto.getCategories();
+        for(String c: userInput) {
+            Optional<Category> category = categoryRepository.findCategoryByCategoryName(c);
+
+            // 2.1 카테고리 존재하지 않을 경우 -> 존재하지 않는 카테고리 오류
+            if(!category.isPresent()) {
+                return new ResponseEntity<>(ReturnCode.INVALID_CATEGORY,HttpStatus.BAD_REQUEST);
+            }
+            // 2.2 카테고리-비디오 관계 저장
+
+
+            VideoCategory videoCategory = new VideoCategory(video,category.get());
+            videoCategoryRepository.save(videoCategory);
+            videoCategories.add(videoCategory);
+        }
+
+        // 양방향 관계 지정
+        video.addCategories(videoCategories);
+        videoRepository.save(video);
+
+
 
         return new ResponseEntity<>(makeResVideoInfo(video),HttpStatus.OK);
     }
