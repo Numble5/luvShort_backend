@@ -17,6 +17,7 @@ public enum ReturnCode {
     USER_NOT_FOUND(404,"해당 요청 정보의 사용자가 존재하지 않습니다."),
     INTERNAL_SERVER_ERROR(500,"내부 서버 오류"),
     INVALID_INTEREST(401, "유효하지 않은 관심사"),
+    INVALID_CATEGORY(400,"유효하지 않는 카테고리"),
     NO_COOKIE(400, "쿠키를 받지 못했습니다."),
     INVALID_COOKIE(400,"유효하지 않은 쿠키"),
     FILE_CAN_NOT_SAVE(400, "파일 저장에 실패했습니다."),

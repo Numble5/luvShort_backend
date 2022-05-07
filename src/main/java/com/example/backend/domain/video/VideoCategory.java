@@ -24,4 +24,8 @@ public class VideoCategory extends BaseEntity {
     @JoinColumn(name = "category_idx")
     private Category category;
 
+    public VideoCategory(Video video, Category category) {
+        this.video = video;
+        this.category = category;
+    }
 }
