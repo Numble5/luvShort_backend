@@ -97,12 +97,12 @@ public class UserController {
 
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
     @GetMapping("/user/{idx}")
-    ResponseEntity<Message> userInfo(@PathVariable("idx") Long userId) {
+    public ResponseEntity<?> userInfo(@PathVariable("idx") Long userId) {
         UserInfo userInfo = userService.getUserInfoById(userId);
 
         if(userInfo == null)
-            return new ResponseEntity<>(new Message(ReturnCode.USER_NOT_FOUND, null), HttpStatus.OK);
-        return new ResponseEntity<>(new Message(ReturnCode.SUCCESS, userInfo),HttpStatus.OK);
+            return new ResponseEntity<>(userInfo, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(userInfo,HttpStatus.OK);
     }
 
 
