@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -39,15 +36,15 @@ public class LikeController {
     // 5-1. likes 엔티티 없으면 likeService의 createLikesEntity 실행
     // 5-2. likes 엔티티 있으면 likeService의 deleteLikesEntity 실행
     @PostMapping("/hearts/{video_idx}")
-    public ResponseEntity<?> pushHeartButton(@PathVariable("video_idx") Long videoIdx, @AuthenticationPrincipal String userEmail){
-        log.info("/api/hearts/{video_idx} videoIdx: {}, userEmail: {}", videoIdx, userEmail);
+    public ResponseEntity<?> pushHeartButton(@PathVariable("video_idx") Long videoIdx, @RequestParam("userIdx") Long userIdx){
 
-        Optional<User> user = userRepository.findByEmail(userEmail);
         Optional<Video> video = videoRepository.findById(videoIdx);
 
+        // 사용자가 없으면 잘못된 요청이라고 리턴
+        Optional<User> user = userRepository.findById(userIdx);
         // 1.
         if (!user.isPresent()){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // 2.
