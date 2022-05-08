@@ -4,10 +4,12 @@ import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.likes.dto.PushHeartButtonResponseDto;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.Video;
+import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.LikesRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.VideoRepository;
 import com.example.backend.service.LikeService;
+import com.example.backend.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -71,6 +73,19 @@ public class LikeController {
             // 5-2.
             likeService.deleteLikesEntity(likeEntity.get());
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/hearts/{idx}")
+    public ResponseEntity<?> getHeartsVideoList(@RequestParam("idx") Long userIdx) {
+
+        // 사용자가 없으면 잘못된 요청이라고 리턴
+        Optional<User> user = userRepository.findById(userIdx);
+        if (!user.isPresent()){
+            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+        }
+        else{
+            return new ResponseEntity<>(likeService.getAllLikeVideos(user.get()), HttpStatus.OK);
         }
     }
 }
