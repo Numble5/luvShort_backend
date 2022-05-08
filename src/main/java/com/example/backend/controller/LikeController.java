@@ -76,7 +76,7 @@ public class LikeController {
         }
     }
 
-    @GetMapping("/hearts/{idx}")
+    @GetMapping("/hearts")
     public ResponseEntity<?> getHeartsVideoList(@RequestParam("idx") Long userIdx) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
