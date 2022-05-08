@@ -68,10 +68,15 @@ public class VideoController {
     }
 
 
-    // TODO: userIdx @RequestBody? @RequestParam?
     @PostMapping(value="/videos/filter")
-    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request) {
-        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request);
+    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request, @RequestParam("userIdx") Long userIdx) {
+
+        // 사용자가 없으면 잘못된 요청이라고 리턴
+        Optional<User> user = userRepository.findById(userIdx);
+        if (!user.isPresent()){
+            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+        }
+        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request,user.get());
         return new ResponseEntity<>(filtered,HttpStatus.OK);
     }
 
