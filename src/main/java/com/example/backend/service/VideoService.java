@@ -155,7 +155,7 @@ public class VideoService {
 
     }
     @Transactional
-    public List<ResponseVideoInfo> filteringVideo(VideoFilterRequest request) {
+    public List<ResponseVideoInfo> filteringVideo(VideoFilterRequest request,User user) {
         // return type
 
         // 1. 카테고리 필터링
@@ -194,8 +194,17 @@ public class VideoService {
 
             }
             List<ResponseVideoInfo> dtoList = new ArrayList<>();
+
+            // user가 좋아한 video 가져오기(likes에서 변환)
+            List<Video> likeVideoList = getLikeVideoByUser(user);
+
             for(Video v: filteredCom){
-                dtoList.add(makeResVideoInfo(v));
+                if (likeVideoList.contains(v)){
+                    dtoList.add(makeResVideoInfoWithHeart(v,true));
+                }
+                else{
+                    dtoList.add(makeResVideoInfoWithHeart(v,false));
+                }
             }
             return dtoList;
         }
