@@ -1,6 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
@@ -61,7 +60,7 @@ public class UserController {
             // 쿠키 만들고
             ResponseCookie responseCookie = ResponseCookie.from("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()))
                                                         .httpOnly(true)
-                                                        .secure(true)
+                                                        //.secure(true)
                                                         .maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();

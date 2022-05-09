@@ -1,7 +1,6 @@
 package com.example.backend.api.kakao;
 
 import com.example.backend.api.kakao.dto.RedirectUrlResponse;
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.TokenProvider;
@@ -65,7 +64,7 @@ public class KakaoApiController {
             // 쿠키 설정
             ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
                     .httpOnly(true)
-                    .secure(true)
+                    //.secure(true)
                     .maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
                     .build();
