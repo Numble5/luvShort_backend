@@ -6,6 +6,7 @@ import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.embedded.UserInfo;
+import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.domain.video.Category;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.VideoCategory;
@@ -40,6 +41,8 @@ public class VideoService {
     private final VideoCategoryRepository videoCategoryRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+
+    private final S3Service s3Service;
 
 //    public List<String> getInterestNames(List<UserInterest> userInterests) {
 //        List<String> interests = new ArrayList<>();
@@ -249,6 +252,33 @@ public class VideoService {
 
 
         return new ResponseEntity<>(makeResVideoInfo(video),HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> deleteVideo(Long videoIdx) {
+        Video video = videoRepository.findByIdx(videoIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 비디오입니다."));
+
+        // 1. 임베드 파일 경우
+        if(video.getVideoType() == VideoType.EMBED){
+            videoRepository.delete(video);
+            return new ResponseEntity<>("임베드 영상 삭제", HttpStatus.OK);
+        }
+        // 2. 직접 업로드 경우
+        // 2.1) 동영상 파일 삭제
+        String videoUrl = video.getVideoUrl();
+        s3Service.delete(videoUrl,"short-video");
+
+        // 2.2) 썸네일 삭제
+        String thumbUrl = video.getThumbnailUrl();
+        if(thumbUrl != "" || !thumbUrl.isEmpty()) {
+            s3Service.delete(thumbUrl,"video-thumbnail");
+        }
+
+        // 2.3) video record 삭제
+        videoRepository.delete(video);
+        return new ResponseEntity<>("직접 영상 삭제", HttpStatus.OK);
+
     }
 
 }
