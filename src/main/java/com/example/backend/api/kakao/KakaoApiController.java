@@ -64,7 +64,7 @@ public class KakaoApiController {
             // 쿠키 설정
             ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
                     .httpOnly(true)
-                    //.secure(true)
+                    .secure(true)
                     .maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
                     .build();
