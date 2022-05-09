@@ -3,16 +3,13 @@ package com.example.backend.domain.video;
 import com.example.backend.domain.BaseEntity;
 import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.video.dto.VideoUpdateDto;
 import com.example.backend.domain.video.enums.VideoType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.LinkedList;
 import java.util.List;
-
 
 @Getter
 @NoArgsConstructor
@@ -61,6 +58,7 @@ public class Video extends BaseEntity {
         this.uploader = uploader;
     }
 
+
     // 연관관계 매핑
     public void setUser(User user){
         // 기존 업로더와의 관계를 제거
@@ -72,6 +70,16 @@ public class Video extends BaseEntity {
     }
 
     // 카테고리 추가
-    public void addCategories(List<VideoCategory> videoCategories) {this.Categories = videoCategories;}
+    // 엔티티가 컨텍스트 당 분리되지 않으면 (즉, 찾기 및 업데이트 작업이 동일한 트랜잭션에 있을 경우)
+    public void addCategories(List<VideoCategory> videoCategories) {
+        this.Categories.clear();
+        if (videoCategories != null) {
+            this.Categories.addAll(videoCategories);
+        }
+    }
 
+    public void updateVideoInfo(VideoUpdateDto updateDto){
+        this.title = updateDto.getTitle();
+        this.content = updateDto.getContent();
+    }
 }
