@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 public class UploaderInfoDto {
 
+    private Long idx;
     private String email;
     private String nickname;
 
@@ -24,6 +25,7 @@ public class UploaderInfoDto {
     @Builder
     public UploaderInfoDto(User entity){
 
+        this.idx = entity.getIdx();
         this.email = entity.getEmail();
         this.nickname = entity.getNickname();
         this.age = entity.getUserInfo().getAge();
