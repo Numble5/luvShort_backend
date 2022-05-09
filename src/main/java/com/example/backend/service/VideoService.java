@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
 
-import com.example.backend.domain.dto.Message;
+import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
@@ -70,38 +70,93 @@ public class VideoService {
         return info;
     }
 
+    public ResponseVideoInfo makeResVideoInfoWithHeart(Video v, Boolean heart) {
+        //List<ResponseVideoInfo> responseVideoInfoList = new ArrayList<>();
+        ResponseVideoInfo info = ResponseVideoInfo.builder()
+                .idx(v.getIdx())
+                .content(v.getContent())
+                .title(v.getTitle())
+                .videoType(v.getVideoType())
+                .videoUrl(v.getVideoUrl())
+                .thumbnailUrl(v.getThumbnailUrl())
+                .hits(v.getHits())
+                .categories(v.getCategories())
+                .createdDate(v.getCreatedDate())
+                .updatedDate(v.getUpdatedDate())
+                .uploader(v.getUploader())
+                .heart(heart)
+                .build();
+        return info;
+    }
+
+    // user가 좋아한 video 가져오기(likes에서 변환)
     @Transactional
-    public List<ResponseVideoInfo> getAllVideo(){
-        List<Video> videoList = videoRepository.findAllBy(); // 전체 비디오 목록
+    public List<Video> getLikeVideoByUser(User user){
+        return user.getLikesList().stream()
+                .map(Likes::getLikeVideo)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public List<ResponseVideoInfo> getLikeVideosByUserThenMakeDtoList(User user,List<Video> videoList){
+        // user가 좋아한 video 가져오기(likes에서 변환)
+        List<Video> likeVideoList = user.getLikesList().stream()
+                                        .map(Likes::getLikeVideo)
+                                        .collect(Collectors.toList());
+
+        // List<Video> -> List<ResponseVideoInfo> 변환
         List<ResponseVideoInfo> dtoList = new ArrayList<>();
         for(Video v: videoList){
-            dtoList.add(makeResVideoInfo(v));
+            if (likeVideoList.contains(v)){
+                dtoList.add(makeResVideoInfoWithHeart(v,true));
+            }
+            else{
+                dtoList.add(makeResVideoInfoWithHeart(v,false));
+            }
         }
         return dtoList;
     }
 
     @Transactional
-    public ResponseVideoInfo getVideoDto(Long videoIdx) throws Exception{
+    public List<ResponseVideoInfo> getAllVideo(User user){
+        List<Video> videoList = videoRepository.findAllBy(); // 전체 비디오 목록
+
+        // 반복되는 코드 함수로 뺌
+        return getLikeVideosByUserThenMakeDtoList(user,videoList);
+    }
+
+    @Transactional
+    public ResponseVideoInfo getVideoDto(Long videoIdx, User user) throws Exception{
         Video video = videoRepository.findByIdx(videoIdx)
                 .orElseThrow(() -> new IllegalArgumentException("해당 문제가 존재하지 않습니다."));
-        return makeResVideoInfo(video);
+
+        // user가 좋아한 video 가져오기(likes에서 변환)
+        List<Video> likeVideoList = getLikeVideoByUser(user);
+
+        if (likeVideoList.contains(video)) {
+            return makeResVideoInfoWithHeart(video,true);
+        }
+        else{
+            return makeResVideoInfoWithHeart(video,false);
+        }
+
     }
     @Transactional
-    public List<ResponseVideoInfo> fetchVideoPagesBy(Long lastVideoId,int size) {
+    public List<ResponseVideoInfo> fetchVideoPagesBy(Long lastVideoId,int size,User user) {
+
         if(lastVideoId == 0L) { // 첫 요청의 경우 0-> 가장 큰 idx + 1로 최신것 size 갯수만큼
             lastVideoId = videoRepository.findTop1ByOrderByIdxDesc().getIdx() + 1;
         }
         PageRequest pageRequest = PageRequest.of(0,size, Sort.by("idx").descending()); // 페이지네이션 위해, 페이지는 항상 0으로 고정
         Page<Video> fetchedVideo = videoRepository.findByIdxLessThan(lastVideoId,pageRequest); // id 작으면 최신 -> 작은 순 정렬 && 마지막보다 작은것 size 만큼
-        List<ResponseVideoInfo> dtoList = new ArrayList<>();
-        for(Video v: fetchedVideo.getContent()){
-            dtoList.add(makeResVideoInfo(v));
-        }
-        return dtoList;
+
+        // 반복되는 코드 함수로 뺌
+        return getLikeVideosByUserThenMakeDtoList(user,fetchedVideo.getContent());
 
     }
     @Transactional
-    public List<ResponseVideoInfo> filteringVideo(VideoFilterRequest request) {
+    public List<ResponseVideoInfo> filteringVideo(VideoFilterRequest request,User user) {
         // return type
 
         // 1. 카테고리 필터링
@@ -139,11 +194,8 @@ public class VideoService {
                 filteredCom.add(v);
 
             }
-            List<ResponseVideoInfo> dtoList = new ArrayList<>();
-            for(Video v: filteredCom){
-                dtoList.add(makeResVideoInfo(v));
-            }
-            return dtoList;
+            // 반복되는 코드 함수로 뺌
+            return getLikeVideosByUserThenMakeDtoList(user,filteredCom);
         }
         // 2.2 비디오 존재하지 않는 경우
         else{
@@ -228,4 +280,5 @@ public class VideoService {
         return new ResponseEntity<>("직접 영상 삭제", HttpStatus.OK);
 
     }
+
 }
