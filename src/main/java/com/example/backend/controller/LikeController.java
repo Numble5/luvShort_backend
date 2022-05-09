@@ -71,7 +71,7 @@ public class LikeController {
         }
         else{
             // 5-2.
-            likeService.deleteLikesEntity(likeEntity.get());
+            likeService.deleteLikesEntity(userEntity, likeEntity.get());
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
