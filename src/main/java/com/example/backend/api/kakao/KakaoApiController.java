@@ -66,7 +66,7 @@ public class KakaoApiController {
                     .httpOnly(true)
                     //.secure(true)
                     .maxAge(7 * 24 * 60 * 60)
-                    //.sameSite("None")
+                    .sameSite("None")
                     .build();
             response.setHeader("Set-Cookie", responseCookie.toString());
             //response.setHeader("Set-Cookie", "key=value; HttpOnly; SameSite=None");
