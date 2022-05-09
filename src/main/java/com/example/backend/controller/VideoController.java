@@ -70,4 +70,12 @@ public class VideoController {
         return videoService.saveVideo(requestInfo);
     }
 
+
+    /** 영상 삭제 **/
+    @DeleteMapping("/videos/{idx}")
+    public ResponseEntity<?> deleteVideo(@PathVariable("idx") Long videoIdx)
+    {
+        return videoService.deleteVideo(videoIdx);
+    }
+
 }
