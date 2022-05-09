@@ -36,10 +36,12 @@ public class ResponseVideoInfo {
 
     private VideoUploaderDto uploader;
 
+    private Boolean heart; //user가 이 비디오 좋아요 눌렀는지
+
 
 
     @Builder
-    public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader) {
+    public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
         this.video_idx = idx;
         this.videoType = videoType;
         this.title = title;
@@ -49,6 +51,7 @@ public class ResponseVideoInfo {
         this.videoUrl = videoUrl;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
+        this.heart = heart;
 
         // 카테고리 이름 return
         List<String> userCategories = new LinkedList<>();
