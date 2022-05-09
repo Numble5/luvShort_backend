@@ -5,9 +5,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.example.backend.exception.BackendException;
 import com.example.backend.exception.ReturnCode;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -69,11 +69,22 @@ public class S3Service {
 
     }
 
-//
-//    public void delete(String filePath) {
-//        File file = new File(filePath);
-//
-//        if(!file.exists()) return; // 파일 존재하지 않는다.
-//        if(!file.delete()) throw new BackendException(ReturnCode.FILE_CAN_NOT_DELETE);
-//    }
+
+    public void delete(String filePath,String bucket) {
+
+
+        String fileBucket = awsBucket + "/" + bucket;
+
+        // 파일 이름 추출
+        String fileName = filePath.split(fileBucket+"/")[1];
+
+        try {
+            s3Client.deleteObject(new DeleteObjectRequest(fileBucket,fileName));
+            if(s3Client.doesObjectExist(fileBucket,fileName)) // 파일 삭제 오류 시
+                throw  new IOException();
+        }catch (IOException e){
+            throw new BackendException(ReturnCode.FILE_CAN_NOT_DELETE);
+        }
+
+    }
 }
