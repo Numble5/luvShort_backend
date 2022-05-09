@@ -12,6 +12,7 @@ import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.VideoCategory;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.domain.video.dto.VideoFilterRequest;
+import com.example.backend.domain.video.dto.VideoUpdateDto;
 import com.example.backend.domain.video.dto.VideoUploadDto;
 import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.exception.ReturnCode;
@@ -238,8 +239,6 @@ public class VideoService {
                 return new ResponseEntity<>(ReturnCode.INVALID_CATEGORY,HttpStatus.BAD_REQUEST);
             }
             // 2.2 카테고리-비디오 관계 저장
-
-
             VideoCategory videoCategory = new VideoCategory(video,category.get());
             videoCategoryRepository.save(videoCategory);
             videoCategories.add(videoCategory);
@@ -251,6 +250,34 @@ public class VideoService {
 
 
 
+        return new ResponseEntity<>(makeResVideoInfo(video),HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> updateVideo(VideoUpdateDto requestInfo) {
+        Video video = videoRepository.findByIdx(requestInfo.getIdx())
+                .orElseThrow(()-> new NoSuchElementException("해당 파일이 존재하지 않습니다."));
+
+        // 비디오가 속하는 카테고리 관계 모두 삭제
+        videoCategoryRepository.deleteByVideo(video);
+
+        // 카테고리 관계 새로 저장
+        List<String> userInput = requestInfo.getCategories();
+        List<VideoCategory> videoCategories = new LinkedList<>();
+        for(String c: userInput){
+            Category category = categoryRepository.findCategoryByCategoryName(c)
+                    .orElseThrow(()->new NoSuchElementException(ReturnCode.INVALID_INTEREST.getMessage()));
+            // 2.2 카테고리-비디오 관계 저장
+            VideoCategory videoCategory = new VideoCategory(video,category);
+            videoCategoryRepository.save(videoCategory);
+            videoCategories.add(videoCategory);
+        }
+        video.addCategories(videoCategories);
+
+        // 다른 수정 사항 update
+        video.updateVideoInfo(requestInfo);
+        // entity update
+        videoRepository.save(video);
         return new ResponseEntity<>(makeResVideoInfo(video),HttpStatus.OK);
     }
 

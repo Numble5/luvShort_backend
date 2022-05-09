@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.video.dto.VideoUpdateDto;
 import com.example.backend.domain.video.dto.VideoUploadDto;
 import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.repository.UserRepository;
@@ -102,6 +103,11 @@ public class VideoController {
     }
 
 
+    /** 영상 수정 **/
+    @PutMapping("/videos/update")
+    public ResponseEntity<?> editVideoInfo(@RequestBody VideoUpdateDto requestInfo) {
+        return videoService.updateVideo(requestInfo);
+    }
     /** 영상 삭제 **/
     @DeleteMapping("/videos/{idx}")
     public ResponseEntity<?> deleteVideo(@PathVariable("idx") Long videoIdx)
