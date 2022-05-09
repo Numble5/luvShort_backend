@@ -62,7 +62,7 @@ public class UserController {
                                                         .httpOnly(true)
                                                         //.secure(true)
                                                         .maxAge(7 * 24 * 60 * 60)
-                                                        .sameSite("None")
+                                                        //.sameSite("None")
                                                         .build();
 
             response.setHeader("Set-Cookie", responseCookie.toString());
