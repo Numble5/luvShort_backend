@@ -11,13 +11,13 @@ public class PushHeartButtonResponseDto {
     private Long likes_idx;
     private String user_email;
     private Long video_idx;
-    private User uploader;
+    private UploaderInfoDto uploader;
 
     @Builder
     public PushHeartButtonResponseDto(Likes entity){
         this.likes_idx = entity.getIdx();
         this.user_email = entity.getLikeUser().getEmail();
         this.video_idx = entity.getLikeVideo().getIdx();
-        this.uploader = entity.getLikeVideo().getUploader();
+        this.uploader = new UploaderInfoDto(entity.getLikeVideo().getUploader());
     }
 }
