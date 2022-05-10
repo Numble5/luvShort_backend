@@ -78,10 +78,14 @@ public class UserController {
     public ResponseEntity<?> getUserInfoByCookie(HttpServletRequest request){
 
         String accessToken = jwtAuthenticationFilter.parseCookie(request);
+        return new ResponseEntity<>(accessToken,HttpStatus.OK);
+        /*
         if(accessToken==null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return userService.getUserInfoByJwt(accessToken);
+
+         */
     }
 
     // 닉네임 중복검사
