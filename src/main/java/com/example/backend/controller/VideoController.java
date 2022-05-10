@@ -45,7 +45,7 @@ public class VideoController {
     }
 
     @GetMapping("/videos/{idx}")
-    public ResponseEntity<?> videoDetail(@PathVariable("idx") Long problemIdx, @RequestParam("userIdx") String userEmail) throws Exception {
+    public ResponseEntity<?> videoDetail(@PathVariable("idx") Long problemIdx, @RequestParam("userEmail") String userEmail) throws Exception {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
         Optional<User> user = userRepository.findByEmail(userEmail);
@@ -57,7 +57,7 @@ public class VideoController {
 
     /** 비디오 목록 페이지네이션**/
     @GetMapping("/videos/paging")
-    public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userIdx") String userEmail) {
+    public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
         Optional<User> user = userRepository.findByEmail(userEmail);
@@ -70,14 +70,14 @@ public class VideoController {
 
 
     @PostMapping(value="/videos/filter")
-    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request, @RequestParam("userEmail") String userEmail) {
+    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request,@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
         Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
-        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request,user.get());
+        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request,lastVideoId,size,user.get());
         return new ResponseEntity<>(filtered,HttpStatus.OK);
     }
 
