@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<?> getUserInfoByCookie(HttpServletRequest request){
 
         String accessToken = jwtAuthenticationFilter.parseCookie(request);
-        return new ResponseEntity<>(accessToken,HttpStatus.OK);
+        return new ResponseEntity<>("hi="+accessToken,HttpStatus.OK);
         /*
         if(accessToken==null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
