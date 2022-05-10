@@ -5,6 +5,7 @@ import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.dto.UserAllResponseDto;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
 import com.example.backend.exception.ReturnCode;
@@ -93,11 +94,11 @@ public class UserService {
         return false;
     }
 
-    // userId -> user info 전체 return
-    public UserInfo getUserInfoById(Long userId) {
-        Optional<User> findByIdUser = userRepository.findById(userId);
-        if(!findByIdUser.isPresent()) return null;
-        return findByIdUser.get().getUserInfo();
+    // email -> user 전체 return
+    public UserAllResponseDto getUserInfoByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if(!user.isPresent()) return null;
+        return new UserAllResponseDto(user.get());
     }
 
     public ResponseEntity<?> getUserInfoByJwt(String accessToken){
