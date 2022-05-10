@@ -25,7 +25,6 @@ public class VideoUploaderDto {
 
     @Builder
     public VideoUploaderDto(User user) {
-        this.idx = user.getIdx();
         this.user_idx = user.getIdx();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
