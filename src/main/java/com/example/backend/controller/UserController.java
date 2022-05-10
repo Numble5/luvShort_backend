@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -121,5 +122,17 @@ public class UserController {
 
         response.setHeader("Set-Cookie", null);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /** 새로운 이미지 등록 **/
+    @PostMapping("/user/profileImg")
+    public ResponseEntity<?> updateProfileImg(@RequestParam("email") String email, MultipartFile profileFile ) {
+        return userService.updateProfile(email,profileFile);
+    }
+
+    /** 기본 이미지로 변경 **/
+    @DeleteMapping("/user/profileImg")
+    public ResponseEntity<?> deleteProfileImg(@RequestParam("email") String email) {
+        return userService.changeToDefaultImg(email);
     }
 }
