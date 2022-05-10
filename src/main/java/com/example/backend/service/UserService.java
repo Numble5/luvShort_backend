@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;

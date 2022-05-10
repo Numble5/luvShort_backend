@@ -111,5 +111,10 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> deleteCookie(HttpServletResponse response){
 
+        response.setHeader("Set-Cookie", null);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
