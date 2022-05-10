@@ -1,6 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;

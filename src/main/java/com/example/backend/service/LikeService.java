@@ -30,13 +30,15 @@ public class LikeService {
 
         // 1.
         Likes likes = new Likes(user, video);
+        user.addLikes(likes);
         // 2.
         likesRepository.save(likes);
     }
 
     @Transactional
-    public void deleteLikesEntity(Likes likes){
+    public void deleteLikesEntity(User user, Likes likes){
         likesRepository.delete(likes);
+        user.deleteLikes(likes);
     }
 
     @Transactional

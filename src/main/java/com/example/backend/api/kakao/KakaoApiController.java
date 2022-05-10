@@ -1,7 +1,6 @@
 package com.example.backend.api.kakao;
 
 import com.example.backend.api.kakao.dto.RedirectUrlResponse;
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.security.TokenProvider;
