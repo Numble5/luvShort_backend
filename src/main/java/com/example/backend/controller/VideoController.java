@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.video.dto.VideoUpdateDto;
 import com.example.backend.domain.video.dto.VideoUploadDto;
 import com.example.backend.domain.video.enums.VideoType;
 import com.example.backend.repository.UserRepository;
@@ -31,10 +32,10 @@ public class VideoController {
     private final UserRepository userRepository;
 
     @RequestMapping(value="/videos",method = RequestMethod.GET)
-    public ResponseEntity<?> videoList(@RequestParam("userIdx") Long userIdx) {
+    public ResponseEntity<?> videoList(@RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
@@ -44,10 +45,10 @@ public class VideoController {
     }
 
     @GetMapping("/videos/{idx}")
-    public ResponseEntity<?> videoDetail(@PathVariable("idx") Long problemIdx, @RequestParam("userIdx") Long userIdx) throws Exception {
+    public ResponseEntity<?> videoDetail(@PathVariable("idx") Long problemIdx, @RequestParam("userEmail") String userEmail) throws Exception {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
@@ -56,10 +57,10 @@ public class VideoController {
 
     /** 비디오 목록 페이지네이션**/
     @GetMapping("/videos/paging")
-    public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userIdx") Long userIdx) {
+    public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
@@ -69,14 +70,14 @@ public class VideoController {
 
 
     @PostMapping(value="/videos/filter")
-    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request, @RequestParam("userIdx") Long userIdx) {
+    public ResponseEntity<?> filteredVideoList(@RequestBody VideoFilterRequest request,@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }
-        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request,user.get());
+        List<ResponseVideoInfo> filtered = videoService.filteringVideo(request,lastVideoId,size,user.get());
         return new ResponseEntity<>(filtered,HttpStatus.OK);
     }
 
@@ -102,6 +103,11 @@ public class VideoController {
     }
 
 
+    /** 영상 수정 **/
+    @PutMapping("/videos/update")
+    public ResponseEntity<?> editVideoInfo(@RequestBody VideoUpdateDto requestInfo) {
+        return videoService.updateVideo(requestInfo);
+    }
     /** 영상 삭제 **/
     @DeleteMapping("/videos/{idx}")
     public ResponseEntity<?> deleteVideo(@PathVariable("idx") Long videoIdx)
