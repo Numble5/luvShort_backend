@@ -1,6 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
@@ -80,10 +79,14 @@ public class UserController {
     public ResponseEntity<?> getUserInfoByCookie(HttpServletRequest request){
 
         String accessToken = jwtAuthenticationFilter.parseCookie(request);
+        return new ResponseEntity<>("hi="+accessToken,HttpStatus.OK);
+        /*
         if(accessToken==null){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return userService.getUserInfoByJwt(accessToken);
+
+         */
     }
 
     // 닉네임 중복검사
@@ -113,5 +116,10 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> deleteCookie(HttpServletResponse response){
 
+        response.setHeader("Set-Cookie", null);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

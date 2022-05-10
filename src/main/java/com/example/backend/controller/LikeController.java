@@ -35,15 +35,15 @@ public class LikeController {
     // 2. 비디오가 없으면 NO_CONTENT 리턴
     // 3. 자신이 올린 비디오를 좋아요 하려고 하면 BAD_REQUEST 리턴하기
     // 4. likes 엔티티 가져오기
-    // 5-1. likes 엔티티 없으면 likeService의 createLikesEntity 실행
-    // 5-2. likes 엔티티 있으면 likeService의 deleteLikesEntity 실행
+    // 5-1. likes 엔티티 있으면 잘못된 요청이라는 에러 뜸
+    // 5-2. likes 엔티티 없으면 likeService의 createLikesEntity 실행
     @PostMapping("/hearts/{video_idx}")
-    public ResponseEntity<?> pushHeartButton(@PathVariable("video_idx") Long videoIdx, @RequestParam("userIdx") Long userIdx){
+    public ResponseEntity<?> pushHeartButton(@PathVariable("video_idx") Long videoIdx, @RequestParam("userEmail") String userEmail){
 
         Optional<Video> video = videoRepository.findById(videoIdx);
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         // 1.
         if (!user.isPresent()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -63,24 +63,67 @@ public class LikeController {
         Video videoEntity = video.get();
         // 4.
         Optional<Likes> likeEntity = likesRepository.findLikesByLikeUserAndLikeVideo(userEntity, videoEntity);
-        if (!likeEntity.isPresent()){
+        if (likeEntity.isPresent()){
             // 5-1.
+            return new ResponseEntity<>("already likeEntity exists",HttpStatus.BAD_REQUEST);
+        }
+        else{
+            // 5-2.
             likeService.createLikesEntity(userEntity, videoEntity);
             Likes entity = likesRepository.findLikesByLikeUserAndLikeVideo(userEntity, videoEntity).get();
             return new ResponseEntity<>(new PushHeartButtonResponseDto(entity), HttpStatus.CREATED);
         }
+    }
+
+    // 비디오 좋아요 취소하기
+    // 1. 사용자가 없으면 INTERNAL_SERVER_ERROR 리턴
+    // 2. 비디오가 없으면 NO_CONTENT 리턴
+    // 3. 자신이 올린 비디오를 좋아요 하려고 하면 BAD_REQUEST 리턴하기
+    // 4. likes 엔티티 가져오기
+    // 5-1. likes 엔티티 없으면 잘못된 요청이라는 에러 뜸
+    // 5-2. likes 엔티티 있으면 likeService의 deleteLikesEntity 실행
+    @PutMapping("/hearts/{video_idx}")
+    public ResponseEntity<?> cancelHeartButton(@PathVariable("video_idx") Long videoIdx, @RequestParam("userEmail") String userEmail){
+
+        Optional<Video> video = videoRepository.findById(videoIdx);
+
+        // 사용자가 없으면 잘못된 요청이라고 리턴
+        Optional<User> user = userRepository.findByEmail(userEmail);
+        // 1.
+        if (!user.isPresent()){
+            return new ResponseEntity<>("invalid userEmail",HttpStatus.BAD_REQUEST);
+        }
+
+        // 2.
+        if (!video.isPresent()){
+            return new ResponseEntity<>("invalid videoIdx",HttpStatus.NO_CONTENT);
+        }
+
+        // 3.
+        if(video.get().getUploader().equals(user)){
+            return new ResponseEntity<>("forbidden to like myVideo",HttpStatus.BAD_REQUEST);
+        }
+
+        User userEntity = user.get();
+        Video videoEntity = video.get();
+        // 4.
+        Optional<Likes> likeEntity = likesRepository.findLikesByLikeUserAndLikeVideo(userEntity, videoEntity);
+        if (!likeEntity.isPresent()){
+            // 5-1.
+            return new ResponseEntity<>("no likeEntity",HttpStatus.BAD_REQUEST);
+        }
         else{
             // 5-2.
-            likeService.deleteLikesEntity(likeEntity.get());
+            likeService.deleteLikesEntity(userEntity, likeEntity.get());
             return new ResponseEntity<>(HttpStatus.OK);
         }
     }
 
     @GetMapping("/hearts")
-    public ResponseEntity<?> getHeartsVideoList(@RequestParam("userIdx") Long userIdx) {
+    public ResponseEntity<?> getHeartsVideoList(@RequestParam("userEmail") String userEmail) {
 
         // 사용자가 없으면 잘못된 요청이라고 리턴
-        Optional<User> user = userRepository.findById(userIdx);
+        Optional<User> user = userRepository.findByEmail(userEmail);
         if (!user.isPresent()){
             return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
         }

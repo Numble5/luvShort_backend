@@ -37,7 +37,8 @@ public class User extends BaseEntity {
     @Embedded
     UserInfo userInfo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     @JoinColumn(name = "profile_idx")
     private Profile profile;
 
@@ -77,6 +78,14 @@ public class User extends BaseEntity {
     public void addMyVideo(Video myVideo){
         //myVideo.setUser(this);
         this.myVideos.add(myVideo);
+    }
+
+    public void addLikes(Likes likes){
+        this.likesList.add(likes);
+    }
+
+    public void deleteLikes(Likes likes){
+        this.likesList.remove(likes);
     }
 
 

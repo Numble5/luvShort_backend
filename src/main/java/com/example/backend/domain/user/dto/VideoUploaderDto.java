@@ -14,7 +14,7 @@ import java.util.List;
 public class VideoUploaderDto {
 
     // 사용자 정보
-    private Long idx;
+    private Long user_idx;
     private String email;
     private String nickname;
     private String profileImgUrl;
@@ -25,7 +25,7 @@ public class VideoUploaderDto {
 
     @Builder
     public VideoUploaderDto(User user) {
-        this.idx = user.getIdx();
+        this.user_idx = user.getIdx();
         this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.profileImgUrl = user.getProfile() != null ? user.getProfile().getProfileImg(): "";

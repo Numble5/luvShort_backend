@@ -1,6 +1,5 @@
 package com.example.backend.service;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
@@ -108,9 +107,12 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Optional<User> user = userRepository.findByEmail(email);
-        // 엔티티 객체 없으면 있으면 유저정보 리턴
-        // 없으면 null 리턴
-        if (user.isPresent()){
+        // 엔티티 객체 없으면 null 리턴
+        if (!user.isPresent()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        // 엔티티 객체 있으면 유저정보 리턴
+        else{
             List<UserInterest> userInterests = userInterestRepository.findUserInterestsByUser(user.get());
             List<String> interestStr = new LinkedList<>();
             for(UserInterest userInterest: userInterests){
@@ -118,8 +120,7 @@ public class UserService {
             }
             return new ResponseEntity<>(new UserReponseDtoByCookie(user.get(),interestStr), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    }
 
 
     @Transactional

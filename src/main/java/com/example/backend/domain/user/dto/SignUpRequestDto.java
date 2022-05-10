@@ -1,5 +1,6 @@
 package com.example.backend.domain.user.dto;
 
+import com.example.backend.domain.user.Profile;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
@@ -66,6 +67,15 @@ public class SignUpRequestDto {
                                 .city(this.city)
                                 .district(this.district)
                                 .build()
+                )
+                // 주영) 이미지 자동 등록용
+                .profile(
+                       Profile
+                               .builder()
+                               .profileImg(GenderType.valueOf(this.gender) == GenderType.MALE?
+                                       "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-m.jpeg" :
+                                       "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-w.jpeg")
+                               .build()
                 )
                 .build();
     }
