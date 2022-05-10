@@ -4,6 +4,7 @@ import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.dto.UserAllResponseDto;
 import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.exception.BackendException;
@@ -96,13 +97,13 @@ public class UserController {
     }
 
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
-    @GetMapping("/user/{idx}")
-    public ResponseEntity<?> userInfo(@PathVariable("idx") Long userId) {
-        UserInfo userInfo = userService.getUserInfoById(userId);
+    @GetMapping("/user/{email}")
+    public ResponseEntity<?> userInfo(@PathVariable("email") String email) {
+         UserAllResponseDto responseDto = userService.getUserInfoByEmail(email);
 
-        if(userInfo == null)
-            return new ResponseEntity<>(userInfo, HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(userInfo,HttpStatus.OK);
+        if(responseDto == null)
+            return new ResponseEntity<>(responseDto, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 
     // 사용자 ID -> 사용자 제거 (회원탈퇴?)
