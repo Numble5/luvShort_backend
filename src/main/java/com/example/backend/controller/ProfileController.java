@@ -15,7 +15,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/profile")
+@RequestMapping("/api/user/profile")
 public class ProfileController {
 
     private final ProfileService profileService;
@@ -23,7 +23,7 @@ public class ProfileController {
 
     // 프로필 조회(userEmail을 가진 User가 userIdx를 가진 User의 프로필 조회)
     @GetMapping("/{idx}")
-    public ResponseEntity<?> getProfile(@PathVariable("idx") Long userIdx, @RequestParam("userIdx") String userEmail) {
+    public ResponseEntity<?> getProfile(@PathVariable("idx") Long userIdx, @RequestParam("userEmail") String userEmail) {
 
         // userIdx를 가진 User가 없으면 PROFILE_NOT_FOUND 리턴
         Optional<User> profileUser = userRepository.findById(userIdx);
