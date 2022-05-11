@@ -25,9 +25,6 @@ public class OtherProfileResponseDto {
     private List<String> interests;
     private String introduce = "아직 인사말이 없습니다";
 
-    // 매칭여부
-    private String isMatched;
-
     // YYYYMMDD를 int age로 계산
     private int convertBirthdayToAge(String birthday){
         String today = ""; // 오늘 날짜
@@ -54,7 +51,7 @@ public class OtherProfileResponseDto {
     }
 
     @Builder
-    public OtherProfileResponseDto(User profileUser, String isMatched){
+    public OtherProfileResponseDto(User profileUser){
         this.profileImg = profileUser.getProfile().getProfileImg();
         this.nickname = profileUser.getNickname();
         this.age = convertBirthdayToAge(String.valueOf(profileUser.getUserInfo().getAge()));
@@ -68,7 +65,6 @@ public class OtherProfileResponseDto {
         }
         this.interests = interestStr;
         //this.introduce = profileUser.getUserInfo().getIntroduce();
-        this.isMatched = isMatched;
 
     }
 
