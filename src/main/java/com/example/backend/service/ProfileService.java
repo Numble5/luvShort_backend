@@ -44,14 +44,14 @@ public class ProfileService {
         // requestUser(나)가 좋아한 영상의 인덱스 조회하기
         List<ResponseVideoInfo> myLikesVideoList =  getResponseVideoInfoList(requestUser);
 
+        // 내가 상대방을 좋아하는지
+        Boolean doILikeOther = false;
         // 상대방이 나를 좋아하는지
-        Boolean doesOtherLikesMe = otherLikesVideoList.stream()                             // 상대방이 좋아한 영상의
+        Boolean doesOtherLikesMe = false;
+        doesOtherLikesMe = otherLikesVideoList.stream()                             // 상대방이 좋아한 영상의
                                                 .map(ResponseVideoInfo::getUploader)                        // 업로더 중
                                                 .map(VideoUploaderDto::getUser_idx)
                                                 .anyMatch(userIdx -> userIdx.equals(requestUser.getIdx()));    // 내가 있는지
-
-        // 내가 상대방을 좋아하는지
-        Boolean doILikeOther = false;
 
         // 상대방의 영상 중 내가 좋아한 영상이면 Heart=true, 아니면 Heart=false로 ResponseVideoInfo 만들기
         for(ResponseVideoInfo otherLikesVideoDto: otherLikesVideoList){                                 // 상대방의 영상이
