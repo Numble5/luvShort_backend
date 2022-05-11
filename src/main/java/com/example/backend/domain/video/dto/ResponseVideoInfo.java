@@ -8,6 +8,7 @@ import com.example.backend.domain.video.VideoCategory;
 import com.example.backend.domain.video.enums.VideoType;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.EnumType;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 public class ResponseVideoInfo {
     // 비디오 정보
@@ -38,7 +40,9 @@ public class ResponseVideoInfo {
 
     private Boolean heart; //user가 이 비디오 좋아요 눌렀는지
 
-
+    public void setHeart(Boolean heart){
+        this.heart = heart;
+    }
 
     @Builder
     public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
@@ -62,6 +66,7 @@ public class ResponseVideoInfo {
 
         // uploader 정보
         this.uploader = VideoUploaderDto.builder().user(uploader).build();
+
     }
 
 }

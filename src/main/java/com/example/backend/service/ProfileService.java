@@ -47,7 +47,7 @@ public class ProfileService {
     public ResponseEntity<?> getOtherProfile(User profileUser, User requestUser) {
 
         // profileUser(상대방)가 올린 영상과 좋아한 영상의 조회(Dto써서 무한참조 방지)
-        List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
+        //List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
         List<ResponseVideoInfo> otherLikesVideoList = getResponseVideoInfoList(profileUser);
 
         // requestUser(나)가 좋아한 영상의 인덱스 조회하기
@@ -63,18 +63,16 @@ public class ProfileService {
         Boolean doILikeOther = false;
 
         // 상대방의 영상 중 내가 좋아한 영상이면 Heart=true, 아니면 Heart=false로 ResponseVideoInfo 만들기
-        Map<ResponseVideoInfo,Boolean> responseVideoInfoList = new LinkedHashMap<>();
         for(ResponseVideoInfo otherLikesVideoDto: otherLikesVideoList){                                 // 상대방의 영상이
             if (myLikesVideoList.contains(otherLikesVideoDto)){                                         // 내가 좋아한 영상에 있으면 FIXME LinkedList-> LinkedHashSet으로 바꿔서 시간복잡도 줄이기
-                responseVideoInfoList.put(otherLikesVideoDto,true);
+                otherLikesVideoDto.setHeart(true);
                 if (!doILikeOther) doILikeOther = true; // 처음 한번만 체크
             }
             else{
-                responseVideoInfoList.put(otherLikesVideoDto,false);
+                otherLikesVideoDto.setHeart(false);
             }
         }
-        return new ResponseEntity<>(responseVideoInfoList, HttpStatus.OK);
-        /*
+
         String isMatched = "";
         if(!doesOtherLikesMe && !doILikeOther){
             isMatched = "하트없음";
@@ -89,8 +87,7 @@ public class ProfileService {
             isMatched = "매칭성공";
         }
 
-         */
-        //return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, responseVideoInfoList), HttpStatus.OK);
+        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, otherLikesVideoList), HttpStatus.OK);
 
 
     }
