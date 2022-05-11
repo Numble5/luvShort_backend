@@ -28,7 +28,7 @@ public class OtherProfileResponseDto {
     // 매칭여부
     private String isMatched;
 
-    private List<ResponseVideoInfo> responseVideoInfoList;
+    private List<ResponseVideoInfo> responseVideoInfoList = new LinkedList<>();
 
     // YYYYMMDD를 int age로 계산
     private int convertBirthdayToAge(String birthday){
@@ -71,7 +71,8 @@ public class OtherProfileResponseDto {
         this.interests = interestStr;
         //this.introduce = profileUser.getUserInfo().getIntroduce();
         this.isMatched = isMatched;
-        this.responseVideoInfoList = responseVideoInfoList;
+        this.responseVideoInfoList.addAll(responseVideoInfoList);
+
 
     }
 
