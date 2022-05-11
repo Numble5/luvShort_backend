@@ -79,7 +79,8 @@ public class ProfileService {
         }
 
         Map<String,Object> response = new HashMap<>();
-        response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
+        response.put("isMatched", isMatched);
+        //response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
         //response.put("videos", otherLikesVideoList);
 
         return ResponseEntity.ok().body(response);
