@@ -72,22 +72,23 @@ public class ProfileService {
                 otherLikesVideoDto.setHeart(false);
             }
         }
-        /*
+        //return new ResponseEntity<>(otherLikesVideoList, HttpStatus.OK); //ok
+
         String isMatched = "";
         if(!doesOtherLikesMe && !doILikeOther){
-            isMatched = "하트없음";
+            isMatched = "NO_HEART";
         }
         else if(!doesOtherLikesMe){
-            isMatched = "하트보냄";
+            isMatched = "SENT_HEART";
         }
         else if (!doILikeOther){
-            isMatched = "하트받음";
+            isMatched = "RECEIVED_HEART";
         }
         else{
-            isMatched = "매칭성공";
+            isMatched = "MATCH_SUCCESS";
         }
-        */
-        return new ResponseEntity<>(otherLikesVideoList, HttpStatus.OK);
+        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, otherLikesVideoList), HttpStatus.OK);
+
 
 
     }
