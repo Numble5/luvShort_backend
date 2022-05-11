@@ -89,39 +89,24 @@ public class ProfileService {
             }
         }
 
-        Map<Object,Object> response = new LinkedHashMap<>();
-        response.put("profileImg", profileUser.getProfile().getProfileImg());
-        response.put("nickname", profileUser.getNickname());
-        response.put("age", convertBirthdayToAge(String.valueOf(profileUser.getUserInfo().getAge())));
-        response.put("gender", profileUser.getUserInfo().getGenderType().getGender());
-        response.put("city",  profileUser.getUserInfo().getCity());
-        response.put("district", profileUser.getUserInfo().getDistrict());
-
-        List<String> interestStr = new LinkedList<>();
-        for(UserInterest userInterest: profileUser.getUserInterests()){
-            interestStr.add(userInterest.getInterest().getInterestName());
-        }
-
-        response.put("interests",interestStr);
-
+        String isMatched = "";
         if(!doesOtherLikesMe && !doILikeOther){
-            response.put("isMatched", "하트없음");
+            isMatched = "하트없음";
         }
         else if(!doesOtherLikesMe){
-            response.put("isMatched", "하트보냄");
+            isMatched = "하트보냄";
         }
         else if (!doILikeOther){
-            response.put("isMatched", "하트받음");
+            isMatched = "하트받음";
         }
         else{
-            response.put("isMatched", "매칭성공");
+            isMatched = "매칭성공";
         }
 
+        Map<String,Object> response = new HashMap<>();
+        //response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
         response.put("videos", otherLikesVideoList);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
-
-
+        return ResponseEntity.ok().body(response);
     }
 }
