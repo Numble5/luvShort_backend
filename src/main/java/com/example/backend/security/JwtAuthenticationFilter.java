@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public String parseCookie(HttpServletRequest request){
-        String cookie = request.getHeader("Set-Cookie");
+        String cookie = request.getHeader("cookie");
 
         if (StringUtils.hasText(cookie) && cookie.startsWith("access_token")) {
             String[] cookieInfos = cookie.split(";");
