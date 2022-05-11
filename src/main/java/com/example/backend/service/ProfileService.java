@@ -3,6 +3,7 @@ package com.example.backend.service;
 
 import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.OtherProfileResponseDto;
 import com.example.backend.domain.user.dto.VideoUploaderDto;
 import com.example.backend.domain.video.Video;
@@ -13,10 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,12 +25,29 @@ public class ProfileService {
 
     private final VideoService videoService;
 
-    public List<Long> getAllLikeVideosIdx(User user){
-        // Likes -> Video -> video_idx
-        return user.getLikesList().stream()
-                .map(Likes::getLikeVideo)
-                .map(Video::getIdx)
-                .collect(Collectors.toList());
+    // YYYYMMDD를 int age로 계산
+    private int convertBirthdayToAge(String birthday){
+        String today = ""; // 오늘 날짜
+        int manAge = 0; // 만 나이
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+
+        today = formatter.format(new Date()); // 시스템 날짜를 가져와서 yyyyMMdd 형태로 변환
+
+        // today yyyyMMdd
+        int todayYear = Integer.parseInt(today.substring(0, 4));
+        int todayMonth = Integer.parseInt(today.substring(4, 6));
+        int todayDay = Integer.parseInt(today.substring(6, 8));
+
+        int birthdayYear = Integer.parseInt(birthday.substring(0, 4));
+        int birthdayMonth = Integer.parseInt(birthday.substring(4, 6));
+        int birthdayDay = Integer.parseInt(birthday.substring(6, 8));
+
+        manAge = todayYear - birthdayYear;
+
+        // 한국나이
+        return manAge + 1;
+
     }
 
     // 무한 참조 방지
@@ -72,22 +88,38 @@ public class ProfileService {
                 otherLikesVideoDto.setHeart(false);
             }
         }
-        //return new ResponseEntity<>(otherLikesVideoList, HttpStatus.OK); //ok
 
-        String isMatched;
+        Map<Object,Object> response = new LinkedHashMap<>();
+        response.put("profileImg", profileUser.getProfile().getProfileImg());
+        response.put("nickname", profileUser.getNickname());
+        response.put("age", convertBirthdayToAge(String.valueOf(profileUser.getUserInfo().getAge())));
+        response.put("gender", profileUser.getUserInfo().getGenderType().getGender());
+        response.put("city",  profileUser.getUserInfo().getCity());
+        response.put("district", profileUser.getUserInfo().getDistrict());
+
+        List<String> interestStr = new LinkedList<>();
+        for(UserInterest userInterest: profileUser.getUserInterests()){
+            interestStr.add(userInterest.getInterest().getInterestName());
+        }
+
+        response.put("interests",interestStr);
+
         if(!doesOtherLikesMe && !doILikeOther){
-            isMatched = "NO_HEART";
+            response.put("isMatched", "하트없음");
         }
         else if(!doesOtherLikesMe){
-            isMatched = "SENT_HEART";
+            response.put("isMatched", "하트보냄");
         }
         else if (!doILikeOther){
-            isMatched = "RECEIVED_HEART";
+            response.put("isMatched", "하트받음");
         }
         else{
-            isMatched = "MATCH_SUCCESS";
+            response.put("isMatched", "매칭성공");
         }
-        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, "MATCH_SUCCESS", otherLikesVideoList), HttpStatus.OK);
+
+        response.put("videos", otherLikesVideoList);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
 
 
