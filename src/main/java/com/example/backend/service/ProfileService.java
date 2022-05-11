@@ -74,7 +74,7 @@ public class ProfileService {
         else{
             isMatched = "매칭성공";
         }
-
-        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, responseVideoInfoList), HttpStatus.OK);
+        return new ResponseEntity<>(responseVideoInfoList, HttpStatus.OK);
+        //return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, responseVideoInfoList), HttpStatus.OK);
     }
 }
