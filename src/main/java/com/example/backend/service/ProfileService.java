@@ -78,7 +78,6 @@ public class ProfileService {
         else{
             response.put("isMatched","매칭성공");
         }
-
          */
         //response.put("doesOtherLikesMe",doesOtherLikesMe);
         response.put("doILikeOther",doILikeOther);
