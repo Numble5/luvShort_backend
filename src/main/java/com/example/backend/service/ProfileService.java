@@ -72,7 +72,7 @@ public class ProfileService {
                 otherLikesVideoDto.setHeart(false);
             }
         }
-
+        /*
         String isMatched = "";
         if(!doesOtherLikesMe && !doILikeOther){
             isMatched = "하트없음";
@@ -86,8 +86,8 @@ public class ProfileService {
         else{
             isMatched = "매칭성공";
         }
-
-        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, otherLikesVideoList), HttpStatus.OK);
+        */
+        return new ResponseEntity<>(otherLikesVideoList, HttpStatus.OK);
 
 
     }
