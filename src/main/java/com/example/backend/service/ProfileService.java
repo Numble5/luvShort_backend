@@ -25,31 +25,6 @@ public class ProfileService {
 
     private final VideoService videoService;
 
-    // YYYYMMDD를 int age로 계산
-    private int convertBirthdayToAge(String birthday){
-        String today = ""; // 오늘 날짜
-        int manAge = 0; // 만 나이
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-
-        today = formatter.format(new Date()); // 시스템 날짜를 가져와서 yyyyMMdd 형태로 변환
-
-        // today yyyyMMdd
-        int todayYear = Integer.parseInt(today.substring(0, 4));
-        int todayMonth = Integer.parseInt(today.substring(4, 6));
-        int todayDay = Integer.parseInt(today.substring(6, 8));
-
-        int birthdayYear = Integer.parseInt(birthday.substring(0, 4));
-        int birthdayMonth = Integer.parseInt(birthday.substring(4, 6));
-        int birthdayDay = Integer.parseInt(birthday.substring(6, 8));
-
-        manAge = todayYear - birthdayYear;
-
-        // 한국나이
-        return manAge + 1;
-
-    }
-
     // 무한 참조 방지
     public List<ResponseVideoInfo> getResponseVideoInfoList(User user){
         // Likes -> Video -> ResponseVideoInfo
@@ -104,8 +79,8 @@ public class ProfileService {
         }
 
         Map<String,Object> response = new HashMap<>();
-        //response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
-        response.put("videos", otherLikesVideoList);
+        response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
+        //response.put("videos", otherLikesVideoList);
 
         return ResponseEntity.ok().body(response);
     }
