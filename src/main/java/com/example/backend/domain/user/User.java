@@ -40,7 +40,8 @@ public class User extends BaseEntity {
     @Embedded
     UserInfo userInfo;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
     @JoinColumn(name = "profile_idx")
     private Profile profile;
 

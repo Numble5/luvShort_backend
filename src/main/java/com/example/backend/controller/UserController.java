@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
+import com.example.backend.domain.user.dto.UserAllResponseDto;
 import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.exception.BackendException;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -97,13 +99,13 @@ public class UserController {
     }
 
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
-    @GetMapping("/user/{idx}")
-    public ResponseEntity<?> userInfo(@PathVariable("idx") Long userId) {
-        UserInfo userInfo = userService.getUserInfoById(userId);
+    @GetMapping("/user/{email}")
+    public ResponseEntity<?> userInfo(@PathVariable("email") String email) {
+         UserAllResponseDto responseDto = userService.getUserInfoByEmail(email);
 
-        if(userInfo == null)
-            return new ResponseEntity<>(userInfo, HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(userInfo,HttpStatus.OK);
+        if(responseDto == null)
+            return new ResponseEntity<>(responseDto, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(responseDto,HttpStatus.OK);
     }
 
     // 사용자 ID -> 사용자 제거 (회원탈퇴?)
@@ -118,5 +120,17 @@ public class UserController {
 
         response.setHeader("Set-Cookie", null);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    /** 새로운 이미지 등록 **/
+    @PostMapping("/user/profileImg")
+    public ResponseEntity<?> updateProfileImg(@RequestParam("email") String email, MultipartFile profileFile ) {
+        return userService.updateProfile(email,profileFile);
+    }
+
+    /** 기본 이미지로 변경 **/
+    @DeleteMapping("/user/profileImg")
+    public ResponseEntity<?> deleteProfileImg(@RequestParam("email") String email) {
+        return userService.changeToDefaultImg(email);
     }
 }
