@@ -64,22 +64,20 @@ public class ProfileService {
             }
         }
 
-        String isMatched = "";
+        Map<String,Object> response = new HashMap<>();
         if(!doesOtherLikesMe && !doILikeOther){
-            isMatched = "하트없음";
+            response.put("isMatched","하트없음");
         }
         else if(!doesOtherLikesMe){
-            isMatched = "하트보냄";
+            response.put("isMatched","하트보냄");
         }
         else if (!doILikeOther){
-            isMatched = "하트받음";
+            response.put("isMatched","하트받음");
         }
         else{
-            isMatched = "매칭성공";
+            response.put("isMatched","매칭성공");
         }
 
-        Map<String,Object> response = new HashMap<>();
-        response.put("isMatched", isMatched);
         //response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
         //response.put("videos", otherLikesVideoList);
 
