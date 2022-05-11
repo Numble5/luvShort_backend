@@ -15,6 +15,7 @@ public class VideoUploaderDto {
 
     // 사용자 정보
     private Long user_idx;
+    private String email;
     private String nickname;
     private String profileImgUrl;
     private List<String> interest;
@@ -25,6 +26,7 @@ public class VideoUploaderDto {
     @Builder
     public VideoUploaderDto(User user) {
         this.user_idx = user.getIdx();
+        this.email = user.getEmail();
         this.nickname = user.getNickname();
         this.profileImgUrl = user.getProfile() != null ? user.getProfile().getProfileImg(): "";
         this.gender = user.getUserInfo().getGenderType();
