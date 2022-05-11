@@ -79,7 +79,7 @@ public class ProfileService {
             response.put("isMatched","매칭성공");
         }
          */
-        //response.put("doesOtherLikesMe",doesOtherLikesMe);
+        response.put("doesOtherLikesMe",doesOtherLikesMe);
         response.put("doILikeOther",doILikeOther);
         //response.put("profile", new OtherProfileResponseDto(profileUser,isMatched));
         //response.put("videos", otherLikesVideoList);
