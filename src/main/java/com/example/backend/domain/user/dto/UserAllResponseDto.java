@@ -1,12 +1,15 @@
 package com.example.backend.domain.user.dto;
 
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.enums.GenderType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -25,6 +28,8 @@ public class UserAllResponseDto {
     // 프로필
     private String profileImg;
 
+    // interest
+    private List<String> interests;
     // 생성,수정 시간
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
@@ -41,6 +46,12 @@ public class UserAllResponseDto {
         this.profileImg = entity.getProfile().getProfileImg();
         this.createdTime = entity.getCreatedDate();
         this.updatedTime = entity.getUpdatedDate();
+
+        List<String> inter = new LinkedList<>();
+        for(UserInterest i: entity.getUserInterests()) {
+            inter.add(i.getInterest().getInterestName());
+        }
+        this.interests = inter;
     }
 
 
