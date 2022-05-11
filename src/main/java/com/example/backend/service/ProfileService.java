@@ -34,6 +34,8 @@ public class ProfileService {
 
         // profileUser(상대방)가 올린 영상과 좋아한 영상 조회하기
         List<Video> otherVideos = profileUser.getMyVideos(); // 데이터 뿌려줘야함
+        return new ResponseEntity<>(otherVideos,HttpStatus.OK);
+        /*
         List<Video> otherLikesVideoList = getAllLikeVideos(profileUser);
 
         // requestUser(나)가 올린 영상과 좋아한 영상 조회하기
@@ -76,5 +78,7 @@ public class ProfileService {
         }
         return new ResponseEntity<>(responseVideoInfoList, HttpStatus.OK);
         //return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, responseVideoInfoList), HttpStatus.OK);
+
+         */
     }
 }
