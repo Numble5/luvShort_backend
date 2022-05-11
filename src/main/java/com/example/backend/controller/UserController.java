@@ -61,10 +61,9 @@ public class UserController {
             ResponseCookie responseCookie = ResponseCookie.from("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()))
                                                         .httpOnly(true)
                                                         .secure(true)
-                                                        .maxAge(7 * 24 * 60 * 60)
+                                                        //.maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();
-
             response.setHeader("Set-Cookie", responseCookie.toString());
             return ResponseEntity.created(URI.create("/auth/register-submit"))
                     .body(new SignUpResponseDto(user));
@@ -78,14 +77,13 @@ public class UserController {
     public ResponseEntity<?> getUserInfoByCookie(HttpServletRequest request){
 
         String accessToken = jwtAuthenticationFilter.parseCookie(request);
-        return new ResponseEntity<>("hi="+accessToken,HttpStatus.OK);
-        /*
+        
         if(accessToken==null){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("no accessToken in cookie", HttpStatus.NO_CONTENT);
         }
         return userService.getUserInfoByJwt(accessToken);
 
-         */
+
     }
 
     // 닉네임 중복검사
