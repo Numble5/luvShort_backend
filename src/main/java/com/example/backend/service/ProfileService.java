@@ -74,7 +74,7 @@ public class ProfileService {
         }
         //return new ResponseEntity<>(otherLikesVideoList, HttpStatus.OK); //ok
 
-        String isMatched = "";
+        String isMatched;
         if(!doesOtherLikesMe && !doILikeOther){
             isMatched = "NO_HEART";
         }
@@ -87,7 +87,7 @@ public class ProfileService {
         else{
             isMatched = "MATCH_SUCCESS";
         }
-        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, isMatched, otherLikesVideoList), HttpStatus.OK);
+        return new ResponseEntity<>(new OtherProfileResponseDto(profileUser, "MATCH_SUCCESS", otherLikesVideoList), HttpStatus.OK);
 
 
 
