@@ -65,7 +65,7 @@ public class KakaoApiController {
             ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
                     .httpOnly(true)
                     .secure(true)
-                    .maxAge(7 * 24 * 60 * 60)
+                    //.maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
                     .build();
             response.setHeader("Set-Cookie", responseCookie.toString());
