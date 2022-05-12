@@ -19,6 +19,7 @@ public interface VideoRepository extends JpaRepository<Video, Long>{
     List<Video> findAllBy();
     Page<Video> findByIdxLessThan(Long lastId, Pageable page);
     Video findTop1ByOrderByIdxDesc();
+    List<Video> findTop10ByOrderByCreatedDateDesc();
 
     Optional<Video> findByIdx(Long idx);
     Optional<Video> findByUploader(User uploader);
