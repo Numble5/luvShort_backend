@@ -2,6 +2,7 @@ package com.example.backend.domain.user.dto;
 
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
+import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +18,8 @@ public class OtherProfileResponseDto {
     private String profileImg;
 
     private String nickname;
-    private int age;
-    private String gender;
+    private String birthday;
+    private GenderType gender;
     private String city;
     private String district;
 
@@ -54,8 +55,8 @@ public class OtherProfileResponseDto {
     public OtherProfileResponseDto(User profileUser){
         this.profileImg = profileUser.getProfile().getProfileImg();
         this.nickname = profileUser.getNickname();
-        this.age = convertBirthdayToAge(String.valueOf(profileUser.getUserInfo().getAge()));
-        this.gender = profileUser.getUserInfo().getGenderType().getGender();
+        this.birthday = String.valueOf(profileUser.getUserInfo().getAge());
+        this.gender = profileUser.getUserInfo().getGenderType();
         this.city = profileUser.getUserInfo().getCity();
         this.district = profileUser.getUserInfo().getDistrict();
 
