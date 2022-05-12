@@ -28,13 +28,13 @@ public class ProfileController {
         // userIdx를 가진 User가 없으면 PROFILE_NOT_FOUND 리턴
         Optional<User> profileUser = userRepository.findById(userIdx);
         if(!profileUser.isPresent()){
-            return new ResponseEntity<>(ReturnCode.PROFILE_NOT_FOUND, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ReturnCode.PROFILE_NOT_FOUND, HttpStatus.OK);
         }
 
         // userEmail을 가진 User가 없으면 USER_NOT_FOUND 리턴
         Optional<User> requestUser = userRepository.findByEmail(userEmail);
         if (!requestUser.isPresent()){
-            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.OK);
         }
 
         return profileService.getOtherProfile(profileUser.get(), requestUser.get());
