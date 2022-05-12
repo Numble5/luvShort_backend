@@ -38,7 +38,7 @@ public class ProfileService {
     public ResponseEntity<?> getOtherProfile(User profileUser, User requestUser) {
 
         // profileUser(상대방)가 올린 영상과 좋아한 영상의 조회(Dto써서 무한참조 방지)
-        //List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
+        List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
         List<ResponseVideoInfo> otherLikesVideoList = getResponseVideoInfoList(profileUser);
 
         // requestUser(나)가 좋아한 영상의 인덱스 조회하기
@@ -54,13 +54,13 @@ public class ProfileService {
                                                 .anyMatch(userIdx -> userIdx.equals(requestUser.getIdx()));    // 내가 있는지
 
         // 상대방의 영상 중 내가 좋아한 영상이면 Heart=true, 아니면 Heart=false로 ResponseVideoInfo 만들기
-        for(ResponseVideoInfo otherLikesVideoDto: otherLikesVideoList){                                 // 상대방의 영상이
-            if (myLikesVideoList.contains(otherLikesVideoDto)){                                         // 내가 좋아한 영상에 있으면 FIXME LinkedList-> LinkedHashSet으로 바꿔서 시간복잡도 줄이기
-                otherLikesVideoDto.setHeart(true);
+        for(ResponseVideoInfo video: otherVideos){                                 // 상대방의 영상이
+            if (myLikesVideoList.contains(video)){                                         // 내가 좋아한 영상에 있으면 FIXME LinkedList-> LinkedHashSet으로 바꿔서 시간복잡도 줄이기
+                video.setHeart(true);
                 if (!doILikeOther) doILikeOther = true; // 처음 한번만 체크
             }
             else{
-                otherLikesVideoDto.setHeart(false);
+                video.setHeart(false);
             }
         }
 
@@ -80,7 +80,7 @@ public class ProfileService {
         }
 
         response.put("profile", new OtherProfileResponseDto(profileUser));
-        response.put("videos", otherLikesVideoList);
+        response.put("videos", otherVideos);
 
         return ResponseEntity.ok().body(response);
     }
