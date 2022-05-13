@@ -21,9 +21,9 @@ public class ProfileController {
     private final ProfileService profileService;
     private final UserRepository userRepository;
 
-    // 프로필 조회(userEmail을 가진 User가 userIdx를 가진 User의 프로필 조회)
+    // 다른사람 프로필 조회(userEmail을 가진 User가 userIdx를 가진 User의 프로필 조회)
     @GetMapping("/{idx}")
-    public ResponseEntity<?> getProfile(@PathVariable("idx") Long userIdx, @RequestParam("userEmail") String userEmail) {
+    public ResponseEntity<?> getOtherProfile(@PathVariable("idx") Long userIdx, @RequestParam("userEmail") String userEmail) {
 
         // userIdx를 가진 User가 없으면 PROFILE_NOT_FOUND 리턴
         Optional<User> profileUser = userRepository.findById(userIdx);
@@ -38,6 +38,19 @@ public class ProfileController {
         }
 
         return profileService.getOtherProfile(profileUser.get(), requestUser.get());
+
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getMyProfile(@RequestParam("userEmail") String userEmail){
+
+        // userIdx를 가진 User가 없으면 PROFILE_NOT_FOUND 리턴
+        Optional<User> requestUser = userRepository.findByEmail(userEmail);
+        if(!requestUser.isPresent()){
+            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.OK);
+        }
+
+        return profileService.getMyProfile(requestUser.get());
 
     }
 
