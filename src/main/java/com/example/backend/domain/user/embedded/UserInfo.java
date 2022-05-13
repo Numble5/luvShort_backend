@@ -1,6 +1,7 @@
 package com.example.backend.domain.user.embedded;
 
 import com.example.backend.domain.user.Profile;
+import com.example.backend.domain.user.dto.EditMyProfileDto;
 import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.domain.user.enums.RoleType;
 import com.example.backend.domain.user.enums.SocialAccountType;
@@ -41,6 +42,10 @@ public class UserInfo {
         this.socialId = socialId;
     }
 
-
-
+    public void updateUserInfo(EditMyProfileDto editMyProfileDto){
+        this.age = Integer.parseInt(editMyProfileDto.getBirthday());
+        this.city = editMyProfileDto.getCity();
+        this.district = editMyProfileDto.getDistrict();
+        //this.genderType = GenderType.valueOf(editMyProfileDto.getGender());
+    }
 }
