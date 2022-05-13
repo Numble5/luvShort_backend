@@ -46,6 +46,6 @@ public class UserInfo {
         this.age = Integer.parseInt(editMyProfileDto.getBirthday());
         this.city = editMyProfileDto.getCity();
         this.district = editMyProfileDto.getDistrict();
-        //this.genderType = GenderType.valueOf(editMyProfileDto.getGender());
+        this.genderType = GenderType.valueOf(editMyProfileDto.getGender());
     }
 }
