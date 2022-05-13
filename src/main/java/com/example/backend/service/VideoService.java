@@ -94,10 +94,13 @@ public class VideoService {
     @Transactional
     public List<ResponseVideoInfo> getLikeVideosByUserThenMakeDtoList(User user,List<Video> videoList){
         // user가 좋아한 video 가져오기(likes에서 변환)
-        List<Video> likeVideoList = user.getLikesList().stream()
-                                        .map(Likes::getLikeVideo)
-                                        .collect(Collectors.toList());
+        List<Video> likeVideoList = new ArrayList<>();
+        if(user != null) {
+            likeVideoList = user.getLikesList().stream()
+                    .map(Likes::getLikeVideo)
+                    .collect(Collectors.toList());
 
+        }
         // List<Video> -> List<ResponseVideoInfo> 변환
         List<ResponseVideoInfo> dtoList = new ArrayList<>();
         for(Video v: videoList){
@@ -111,6 +114,12 @@ public class VideoService {
         return dtoList;
     }
 
+    @Transactional
+    public List<ResponseVideoInfo> getBasiceVideoDtos() {
+        List<Video> videoList = videoRepository.findTop10ByOrderByCreatedDateDesc();
+
+        return getLikeVideosByUserThenMakeDtoList(null,videoList);
+    }
     @Transactional
     public List<ResponseVideoInfo> getAllVideo(User user){
         List<Video> videoList = videoRepository.findAllBy(); // 전체 비디오 목록
