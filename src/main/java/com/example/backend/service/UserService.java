@@ -63,7 +63,7 @@ public class UserService {
             userInterests.add(userInterest);
         }
         // 양방향 관계 저장
-        user.addInterests(userInterests);
+        user.getUserInterests().addAll(userInterests);
         return ReturnCode.SUCCESS;
     }
 
