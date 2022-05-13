@@ -23,7 +23,7 @@ public class ProfileResponseDto {
     private String district;
 
     private List<String> interests;
-    private String introduce = "아직 인사말이 없습니다";
+    private String introduce;
 
     // YYYYMMDD를 int age로 계산
     private int convertBirthdayToAge(String birthday){
@@ -64,7 +64,7 @@ public class ProfileResponseDto {
             interestStr.add(userInterest.getInterest().getInterestName());
         }
         this.interests = interestStr;
-        //this.introduce = profileUser.getUserInfo().getIntroduce();
+        this.introduce = profileUser.getProfile().getIntroduce();
 
     }
 
