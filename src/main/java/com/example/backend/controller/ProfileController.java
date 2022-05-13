@@ -1,6 +1,8 @@
 package com.example.backend.controller;
 
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.dto.EditMyProfileDto;
+import com.example.backend.domain.user.dto.ProfileResponseDto;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.ProfileService;
@@ -52,6 +54,23 @@ public class ProfileController {
 
         return profileService.getMyProfile(requestUser.get());
 
+    }
+
+    @PutMapping
+    public ResponseEntity<?> EditMyProfile(@RequestBody EditMyProfileDto editMyProfileDto, @RequestParam("userEmail") String userEmail){
+        // userIdx를 가진 User가 없으면 PROFILE_NOT_FOUND 리턴
+        Optional<User> requestUser = userRepository.findByEmail(userEmail);
+        if(!requestUser.isPresent()){
+            return new ResponseEntity<>(ReturnCode.USER_NOT_FOUND, HttpStatus.OK);
+        }
+
+        ReturnCode returnCode = profileService.updateMyProfile(requestUser.get(),requestUser.get().getProfile(),editMyProfileDto);
+        if (returnCode == ReturnCode.INVALID_INTEREST){
+            return new ResponseEntity<>(ReturnCode.INVALID_INTEREST, HttpStatus.OK);
+        }
+        // 잘 업데이트 되었는지 확인
+        Optional<User> responseUser = userRepository.findByEmail(userEmail);
+        return new ResponseEntity<>(new ProfileResponseDto(responseUser.get()), HttpStatus.OK);
     }
 
 }

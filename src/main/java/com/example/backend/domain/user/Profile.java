@@ -32,4 +32,9 @@ public class Profile extends BaseEntity {
     public void updateImg(String img) {
         this.profileImg = img;
     }
+
+    public void updateProfile(String img, String introduce){
+        this.profileImg = img;
+        this.introduce = introduce;
+    }
 }
