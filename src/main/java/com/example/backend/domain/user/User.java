@@ -2,7 +2,9 @@ package com.example.backend.domain.user;
 
 import com.example.backend.domain.BaseEntity;
 import com.example.backend.domain.likes.Likes;
+import com.example.backend.domain.user.dto.EditMyProfileDto;
 import com.example.backend.domain.user.embedded.UserInfo;
+import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.domain.user.enums.RoleType;
 import com.example.backend.domain.user.enums.UserStatus;
 import com.example.backend.domain.video.Video;
@@ -96,6 +98,16 @@ public class User extends BaseEntity {
 
     public void updateLoginDate(){
         this.lastLoginDate = LocalDateTime.now();
+    }
+
+    public void updateUser(EditMyProfileDto editMyProfileDto){
+        this.nickname = editMyProfileDto.getNickname();
+        this.userInfo = UserInfo.builder()
+                .age(Integer.parseInt(editMyProfileDto.getBirthday()))
+                .city(editMyProfileDto.getCity())
+                .district(editMyProfileDto.getDistrict())
+                .genderType(GenderType.valueOf(editMyProfileDto.getGender()))
+                .build();
     }
 
 
