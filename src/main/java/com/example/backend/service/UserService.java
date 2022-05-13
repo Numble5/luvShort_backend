@@ -93,12 +93,18 @@ public class UserService {
 
     }
 
-    // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
-    // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
+    // 1. 해당 이메일을 갖는 User 엔티티가 있으면 로그인(메인 페이지로 이동)
+    // 1-2. 이때 현재시간으로 lastLoginDate 업데이트
+    // 2. User 엔티티가 있으면 회원가입(step1으로 이동)
+    @Transactional
     public Boolean alreadySignUp(String email){
-        if(userRepository.existsOnlyByEmail(email)){
+        Optional<User> user = userRepository.findByEmail(email);
+        // 1.
+        if(user.isPresent()){
+            user.get().updateLoginDate(); // 1-2.
             return true;
         }
+        // 2.
         return false;
     }
 

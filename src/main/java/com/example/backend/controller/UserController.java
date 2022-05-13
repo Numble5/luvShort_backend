@@ -63,7 +63,7 @@ public class UserController {
             ResponseCookie responseCookie = ResponseCookie.from("access_token", tokenProvider.createJws(signUpRequestDto.getEmail()))
                                                         .httpOnly(true)
                                                         .secure(true)
-                                                        //.maxAge(7 * 24 * 60 * 60)
+                                                        .maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();
             response.setHeader("Set-Cookie", responseCookie.toString());
@@ -117,7 +117,6 @@ public class UserController {
 
     @DeleteMapping("/logout")
     public ResponseEntity<?> deleteCookie(HttpServletResponse response){
-
         response.setHeader("Cookie", null);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
