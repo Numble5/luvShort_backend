@@ -3,7 +3,6 @@ package com.example.backend.domain.user.dto;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.enums.GenderType;
-import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,7 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class OtherProfileResponseDto {
+public class ProfileResponseDto {
 
     private String profileImg;
 
@@ -52,7 +51,7 @@ public class OtherProfileResponseDto {
     }
 
     @Builder
-    public OtherProfileResponseDto(User profileUser){
+    public ProfileResponseDto(User profileUser){
         this.profileImg = profileUser.getProfile().getProfileImg();
         this.nickname = profileUser.getNickname();
         this.birthday = String.valueOf(profileUser.getUserInfo().getAge());

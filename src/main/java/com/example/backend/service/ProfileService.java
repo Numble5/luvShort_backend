@@ -3,18 +3,14 @@ package com.example.backend.service;
 
 import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
-import com.example.backend.domain.user.UserInterest;
-import com.example.backend.domain.user.dto.OtherProfileResponseDto;
+import com.example.backend.domain.user.dto.ProfileResponseDto;
 import com.example.backend.domain.user.dto.VideoUploaderDto;
-import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,9 +75,16 @@ public class ProfileService {
             response.put("isMatched","매칭성공");
         }
 
-        response.put("profile", new OtherProfileResponseDto(profileUser));
+        response.put("profile", new ProfileResponseDto(profileUser));
         response.put("videos", otherVideos);
 
+        return ResponseEntity.ok().body(response);
+    }
+
+    public ResponseEntity<?> getMyProfile(User requestUser){
+        Map<String,Object> response = new HashMap<>();
+        response.put("profile", new ProfileResponseDto(requestUser));
+        response.put("videos",requestUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList()));
         return ResponseEntity.ok().body(response);
     }
 }
