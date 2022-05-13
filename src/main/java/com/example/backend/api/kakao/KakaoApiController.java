@@ -3,6 +3,7 @@ package com.example.backend.api.kakao;
 import com.example.backend.api.kakao.dto.RedirectUrlResponse;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.exception.ReturnCode;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.security.TokenProvider;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -59,18 +60,17 @@ public class KakaoApiController {
 
         // 5.
         // 이미 회원가입을 했으면 쿠키 만들고 메인화면으로 이동
+        // lastLoginDate 업데이트는 alreadySignUp에서 실행
         if(userService.alreadySignUp(email)){
 
             // 쿠키 설정
             ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
                     .httpOnly(true)
                     .secure(true)
-                    //.maxAge(7 * 24 * 60 * 60)
+                    .maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
                     .build();
             response.setHeader("Set-Cookie", responseCookie.toString());
-            //response.setHeader("Set-Cookie", "key=value; HttpOnly; SameSite=None");
-
 
             return new ResponseEntity<>(new RedirectUrlResponse("/", email), HttpStatus.OK);
 
