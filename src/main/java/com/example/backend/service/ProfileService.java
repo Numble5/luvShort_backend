@@ -5,11 +5,13 @@ import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.Interest;
 import com.example.backend.domain.user.Profile;
 import com.example.backend.domain.user.User;
+import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.EditMyProfileDto;
 import com.example.backend.domain.user.dto.ProfileResponseDto;
 import com.example.backend.domain.user.dto.VideoUploaderDto;
 import com.example.backend.domain.video.dto.ResponseVideoInfo;
 import com.example.backend.exception.ReturnCode;
+import com.example.backend.repository.UserInterestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class ProfileService {
 
     private final VideoService videoService;
     private final UserService userService;
+    private final UserInterestRepository userInterestRepository;
 
     // 무한 참조 방지
     public List<ResponseVideoInfo> getResponseVideoInfoList(User user){
@@ -96,7 +99,8 @@ public class ProfileService {
 
     @Transactional
     public ReturnCode updateMyProfile(User user, Profile profile, EditMyProfileDto editMyProfileDto){
-        user.getUserInterests().clear(); //NOTE: orphanRemoval = true이므로 데이터베이스의 데이터도 삭제
+        user.getUserInterests().clear();
+        userInterestRepository.deleteAllByUser(user);
         //프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
         List<String> interestInput = editMyProfileDto.getInterests();
         ReturnCode returnCode = userService.saveUserInterest(interestInput, user);
