@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status; // 각 사용자의 상태(정상/탈퇴) 관리할 Enum 클래스
+
+    private LocalDateTime lastLoginDate;
 
     @Embedded
     UserInfo userInfo;
@@ -89,6 +92,10 @@ public class User extends BaseEntity {
 
     public void deleteLikes(Likes likes){
         this.likesList.remove(likes);
+    }
+
+    public void updateLoginDate(){
+        this.lastLoginDate = LocalDateTime.now();
     }
 
 
