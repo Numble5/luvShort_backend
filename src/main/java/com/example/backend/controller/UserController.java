@@ -117,8 +117,7 @@ public class UserController {
 
     @DeleteMapping("/logout")
     public ResponseEntity<?> deleteCookie(HttpServletResponse response){
-
-        response.setHeader("cookie", null);
+        response.setHeader("Cookie", null);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

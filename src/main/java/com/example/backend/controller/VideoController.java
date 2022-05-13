@@ -55,6 +55,12 @@ public class VideoController {
         return new ResponseEntity<>(videoService.getVideoDto(problemIdx,user.get()), HttpStatus.OK);
     }
 
+    /** 사용자 정보 없이 최신 비디오 10 개 return **/
+    @GetMapping("/videos/basic")
+    public ResponseEntity<?> getBasicVideos() throws  Exception {
+        return new ResponseEntity<>(videoService.getBasiceVideoDtos(),HttpStatus.OK);
+    }
+
     /** 비디오 목록 페이지네이션**/
     @GetMapping("/videos/paging")
     public ResponseEntity<?> getPagingVideoList(@RequestParam("lastVideoIdx") Long lastVideoId, @RequestParam("size") int size, @RequestParam("userEmail") String userEmail) {
