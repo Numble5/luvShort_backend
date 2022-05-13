@@ -4,6 +4,7 @@ import com.example.backend.domain.user.Profile;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
+import com.example.backend.domain.user.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,7 @@ public class SignUpRequestDto {
         return User.builder()
                 .email(email)
                 .nickname(nickname)
+                .roleType(RoleType.NORMAL)
                 .userInfo( // 임베디드타입
                         UserInfo
                                 .builder()
