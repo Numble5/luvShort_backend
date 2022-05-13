@@ -70,6 +70,16 @@ public class ProfileController {
         }
         // 잘 업데이트 되었는지 확인
         Optional<User> responseUser = userRepository.findByEmail(userEmail);
+
+        //log.info("profileImg: {}", responseUser.get().getProfile().getProfileImg());
+
+        //log.info("nickname: {}", responseUser.get().getNickname());
+        //log.info("birthday: {}", responseUser.get().getUserInfo().getAge());
+        //log.info("gender: {}", responseUser.get().getUserInfo().getGenderType());
+        //log.info("city: {}", responseUser.get().getUserInfo().getCity());
+        //log.info("nickname: {}", responseUser.get().getUserInfo().getDistrict());
+        //log.info("introduce: {}", responseUser.get().getProfile().getIntroduce());
+
         return new ResponseEntity<>(new ProfileResponseDto(responseUser.get()), HttpStatus.OK);
     }
 

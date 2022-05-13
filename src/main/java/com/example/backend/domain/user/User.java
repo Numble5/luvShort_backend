@@ -76,12 +76,6 @@ public class User extends BaseEntity {
         this.profile = profile;
     }
 
-
-    // 관심사 추가
-    public void addInterests(List<UserInterest> userInterests){
-        this.userInterests = userInterests;
-    }
-
     public void addMyVideo(Video myVideo){
         //myVideo.setUser(this);
         this.myVideos.add(myVideo);
