@@ -99,14 +99,12 @@ public class ProfileService {
         user.getUserInterests().clear(); //NOTE: orphanRemoval = true이므로 데이터베이스의 데이터도 삭제
         //프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
         List<String> interestInput = editMyProfileDto.getInterests();
-        /*
         ReturnCode returnCode = userService.saveUserInterest(interestInput, user);
         if (returnCode == ReturnCode.INVALID_INTEREST){
             return returnCode;
         }
         user.updateUser(editMyProfileDto);
         profile.updateProfile(editMyProfileDto.getProfileImg(), editMyProfileDto.getIntroduce());
-        */
         return ReturnCode.SUCCESS;
     }
 
