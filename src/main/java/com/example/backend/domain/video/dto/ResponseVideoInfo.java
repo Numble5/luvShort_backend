@@ -5,6 +5,7 @@ import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.VideoUploaderDto;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.VideoCategory;
+import com.example.backend.domain.video.enums.ControlType;
 import com.example.backend.domain.video.enums.VideoType;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class ResponseVideoInfo {
     // 비디오 정보
     private Long video_idx;
     private VideoType videoType;
+    private ControlType controlType;
 
     private String title;
     private String content;
@@ -45,9 +47,10 @@ public class ResponseVideoInfo {
     }
 
     @Builder
-    public ResponseVideoInfo(Long idx, VideoType videoType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
+    public ResponseVideoInfo(Long idx, VideoType videoType,ControlType controlType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
         this.video_idx = idx;
         this.videoType = videoType;
+        this.controlType = controlType;
         this.title = title;
         this.content = content;
         this.hits = hits;
