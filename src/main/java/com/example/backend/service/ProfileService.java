@@ -104,7 +104,8 @@ public class ProfileService {
             return returnCode;
         }
         user.updateUser(editMyProfileDto);
-        //profile.updateProfile(editMyProfileDto.getProfileImg(), editMyProfileDto.getIntroduce());
+        user.getUserInfo().updateUserInfo(editMyProfileDto);
+        profile.updateProfile(editMyProfileDto.getProfileImg(), editMyProfileDto.getIntroduce());
         return ReturnCode.SUCCESS;
     }
 
