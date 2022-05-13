@@ -54,27 +54,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public String parseCookie(HttpServletRequest request){
-        String cookie = request.getHeader("Set-Cookie");
-        return cookie;
-        /*
+        String cookie = request.getHeader("Cookie");
+        //
         if (StringUtils.hasText(cookie) && cookie.startsWith("access_token")) {
             String[] cookieInfos = cookie.split(";");
             for(String cookieInfo : cookieInfos){
                 log.info("cookieInfo: {}", cookieInfo);
 
+                /*
                 cookieInfo: access_token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzYXZhbm5haDAzMEBkYXVtLm5ldCIsImV4cCI6MTY1MTY1NzcwN30.Rj_XnWrEU0dJc2hTqxGqoAtGgIFX5HENn1XChNw3anvXjW2Xd7gISr602qhdTYDlg53WdhT-sYlpVxTSBLqpqw
                 cookieInfo:  Max-Age=604800
                 cookieInfo:  Expires=Tue, 10 May 2022 09:48:30 GMT
                 cookieInfo:  Secure
                 cookieInfo:  HttpOnly
                 cookieInfo:  SameSite=None
-
+                */
             }
             return cookieInfos[0].substring(13);
         }
 
         return null;
-         */
+
     }
 
     private String parseBearerToken(HttpServletRequest request) {

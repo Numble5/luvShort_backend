@@ -5,7 +5,10 @@ import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.dto.VideoUpdateDto;
 import com.example.backend.domain.video.enums.VideoType;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
+
 
 import javax.persistence.*;
 import java.util.LinkedList;
@@ -15,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Video extends BaseEntity {
 
     @Id

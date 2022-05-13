@@ -6,6 +6,8 @@ import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.RoleType;
 import com.example.backend.domain.user.enums.UserStatus;
 import com.example.backend.domain.video.Video;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

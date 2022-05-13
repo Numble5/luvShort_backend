@@ -1,6 +1,6 @@
 package com.example.backend.config;
 
-import com.example.backend.security.CookieAttributeFilter;
+import com.example.backend.security.CorsFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +19,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new RestTemplate();
     }
 
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -30,13 +31,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
 
-    /*
+
     @Bean
     public FilterRegistrationBean filterBean() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CookieAttributeFilter());
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CorsFilter());
         return registrationBean;
     }
-     */
+
 
 
 

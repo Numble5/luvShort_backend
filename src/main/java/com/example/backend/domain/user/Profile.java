@@ -20,9 +20,13 @@ public class Profile extends BaseEntity {
     @Column
     private String profileImg;
 
+    @Column
+    private String introduce;
+
     @Builder
-    public Profile(String profileImg) {
+    public Profile(String profileImg, String introduce) {
         this.profileImg = profileImg;
+        this.introduce = introduce;
     }
 
     public void updateImg(String img) {
