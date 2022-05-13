@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private RoleType roleType; // 각 사용자의 권한(관리자/일반회원)을 관리할 Enum 클래스
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status; // 각 사용자의 권한을 관리할 Enum 클래스
+    private UserStatus status; // 각 사용자의 상태(정상/탈퇴) 관리할 Enum 클래스
 
     @Embedded
     UserInfo userInfo;
