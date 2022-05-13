@@ -4,6 +4,7 @@ import com.example.backend.domain.BaseEntity;
 import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.video.dto.VideoUpdateDto;
+import com.example.backend.domain.video.enums.ControlType;
 import com.example.backend.domain.video.enums.VideoType;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -28,6 +29,9 @@ public class Video extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private VideoType videoType;
+
+    @Enumerated(EnumType.STRING)
+    private ControlType controlType;
 
     private String title;
     private String content;
@@ -59,7 +63,9 @@ public class Video extends BaseEntity {
         this.thumbnailUrl = thumbnailUrl;
         this.videoUrl = videoUrl;
         this.videoType = videoType;
+        this.controlType = ControlType.AVAIL; // 처음 생성 시 무조건 이용 가능 상태
         this.uploader = uploader;
+
     }
 
 

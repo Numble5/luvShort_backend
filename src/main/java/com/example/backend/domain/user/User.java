@@ -93,6 +93,7 @@ public class User extends BaseEntity {
         this.lastLoginDate = LocalDateTime.now();
     }
 
+    @Transactional
     public void updateUser(EditMyProfileDto editMyProfileDto){
         this.nickname = editMyProfileDto.getNickname();
     }
