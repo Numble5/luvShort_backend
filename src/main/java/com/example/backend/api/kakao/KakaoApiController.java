@@ -72,12 +72,12 @@ public class KakaoApiController {
             //response.setHeader("Set-Cookie", "key=value; HttpOnly; SameSite=None");
 
 
-            return new ResponseEntity<>(new RedirectUrlResponse("/"), HttpStatus.OK);
+            return new ResponseEntity<>(new RedirectUrlResponse("/", email), HttpStatus.OK);
 
         }
         // 회원가입을 하지 않았으면 step1으로 이동
         else{
-            return new ResponseEntity<>(new RedirectUrlResponse("/step1"), HttpStatus.OK);
+            return new ResponseEntity<>(new RedirectUrlResponse("/step1", email), HttpStatus.OK);
         }
 
 
