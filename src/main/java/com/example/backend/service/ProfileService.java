@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class ProfileService {
 
     private final VideoService videoService;
     private final UserService userService;
+    private final S3Service s3Service;
     private final UserInterestRepository userInterestRepository;
 
     // 무한 참조 방지
@@ -98,7 +100,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public ReturnCode updateMyProfile(User user, Profile profile, EditMyProfileDto editMyProfileDto){
+    public ReturnCode updateMyProfile(User user, Profile profile, EditMyProfileDto editMyProfileDto, MultipartFile file ){
         user.getUserInterests().clear();
         userInterestRepository.deleteAllByUser(user);
         //프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
@@ -109,6 +111,19 @@ public class ProfileService {
         }
         user.updateUser(editMyProfileDto);
         user.getUserInfo().updateUserInfo(editMyProfileDto);
+        // 프로필 이미지 수정 (파일 들어온 경우)
+        if(!file.isEmpty()) {
+            if(!userService.checkDefaultImg(profile.getProfileImg())){
+                // 기본 이미지 아닌 경우 -> 기존 이미지 삭제
+                String imgUrl = profile.getProfileImg();
+                System.out.println(profile.getProfileImg());
+                s3Service.delete(imgUrl,"profile-image");
+            }
+            editMyProfileDto.setProfileImg(s3Service.upload(file,"profile-image"));
+        }
+        else {
+            editMyProfileDto.setProfileImg(profile.getProfileImg());
+        }
         profile.updateProfile(editMyProfileDto.getProfileImg(), editMyProfileDto.getIntroduce());
         return ReturnCode.SUCCESS;
     }
