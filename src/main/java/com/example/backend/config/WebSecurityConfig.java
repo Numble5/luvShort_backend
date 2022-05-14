@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/api/auth/**", "/api/videos/**","/api/user/**").permitAll() // /와 /api/auth/kakao-login/** 경로는 인증 안해도 됨.
+                .antMatchers("/", "/api/auth/**", "/api/videos/**","/api/user/**","/api/chat/**").permitAll() // /와 /api/auth/kakao-login/** gi경로는 인증 안해도 됨.
                 .anyRequest() // /와 /auth/**이외의 모든 경로는 인증 해야됨.
                 .authenticated();
 
