@@ -122,4 +122,10 @@ public class VideoController {
         return videoService.deleteVideo(videoIdx);
     }
 
+    /** 관리자 - 영상 제한**/
+    @PutMapping("/videos/control/{idx}")
+    public ResponseEntity<?> controlVideo(@PathVariable("idx") Long videoIdx,@RequestParam("email") String user) throws Exception {
+        return new ResponseEntity<>(videoService.controlVideoBy(videoIdx,user),HttpStatus.OK);
+    }
+
 }

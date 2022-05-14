@@ -42,6 +42,31 @@ public class UserService {
 
     private final S3Service s3Service;
 
+    @Transactional
+    public ReturnCode saveUserInterest(List<String> interestInput, User user){
+        //프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
+        List<Interest> interests = new LinkedList<>();
+        for(String i: interestInput){
+            Optional<Interest> interest = interestRepository.findByInterestName(i);
+            if (!interest.isPresent()){
+                return ReturnCode.INVALID_INTEREST;
+            }
+            interests.add(interest.get());
+        }
+
+        // 3-2. UserInterest 엔티티 저장하고 User에 저장하기 위해 리스트에 추가
+        List<UserInterest> userInterests = new LinkedList<>();
+        for(Interest interest: interests){
+            // userInterest 객체 생성해서 레포지토리에 저장
+            UserInterest userInterest = new UserInterest(user,interest);
+            userInterestRepository.save(userInterest);
+            userInterests.add(userInterest);
+        }
+        // 양방향 관계 저장
+        user.getUserInterests().addAll(userInterests);
+        return ReturnCode.SUCCESS;
+    }
+
     // User 엔티티 만들고 레포지토리에 저장
     // 1. 해당 이메일을 갖는 User 엔티티가 이미 있으면(0개 초과이면) 400 에러
     // 2. signUpDto를 User 엔티티로 변환
@@ -66,26 +91,8 @@ public class UserService {
 
         // 3. 관심사 추가
         // 3-1. 프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
-        List<String> interestStr = signUpRequestDto.getSelectedInterests();
-        List<Interest> interests = new LinkedList<>();
-        for(String i: interestStr){
-            Optional<Interest> interest = interestRepository.findByInterestName(i);
-            if (!interest.isPresent()){
-                return ReturnCode.INVALID_INTEREST;
-            }
-            interests.add(interest.get());
-        }
-
-        // 3-2. UserInterest 엔티티 저장하고 User에 저장하기 위해 리스트에 추가
-        List<UserInterest> userInterests = new LinkedList<>();
-        for(Interest interest: interests){
-            // userInterest 객체 생성해서 레포지토리에 저장
-            UserInterest userInterest = new UserInterest(user,interest);
-            userInterestRepository.save(userInterest);
-            userInterests.add(userInterest);
-        }
-        // 양방향 관계 저장
-        user.addInterests(userInterests);
+        List<String> interestInput = signUpRequestDto.getSelectedInterests();
+        ReturnCode returnCode = saveUserInterest(interestInput, user);
 
         // 4.
         userRepository.save(user);
@@ -93,12 +100,18 @@ public class UserService {
 
     }
 
-    // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
-    // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
+    // 1. 해당 이메일을 갖는 User 엔티티가 있으면 로그인(메인 페이지로 이동)
+    // 1-2. 이때 현재시간으로 lastLoginDate 업데이트
+    // 2. User 엔티티가 있으면 회원가입(step1으로 이동)
+    @Transactional
     public Boolean alreadySignUp(String email){
-        if(userRepository.existsOnlyByEmail(email)){
+        Optional<User> user = userRepository.findByEmail(email);
+        // 1.
+        if(user.isPresent()){
+            user.get().updateLoginDate(); // 1-2.
             return true;
         }
+        // 2.
         return false;
     }
 

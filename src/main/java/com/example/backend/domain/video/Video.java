@@ -94,4 +94,8 @@ public class Video extends BaseEntity {
         this.title = updateDto.getTitle();
         this.content = updateDto.getContent();
     }
+
+    public void updateControlType(Video video) {
+        this.controlType = ControlType.CENSORED;
+    }
 }
