@@ -50,6 +50,7 @@ public class VideoService {
         ResponseVideoInfo info = ResponseVideoInfo.builder()
                 .idx(v.getIdx())
                 .content(v.getContent())
+                .fileName(v.getFileName())
                 .title(v.getTitle())
                 .videoType(v.getVideoType())
                 .controlType(v.getControlType())
@@ -69,6 +70,7 @@ public class VideoService {
         ResponseVideoInfo info = ResponseVideoInfo.builder()
                 .idx(v.getIdx())
                 .content(v.getContent())
+                .fileName(v.getFileName())
                 .title(v.getTitle())
                 .videoType(v.getVideoType())
                 .controlType(v.getControlType())
@@ -210,6 +212,7 @@ public class VideoService {
         // 비디오 생성
         Video video = Video.builder()
                 .title(uploadDto.getTitle())
+                .fileName(uploadDto.getFileName())
                 .content(uploadDto.getContent())
                 .hits(0L)
                 .thumbnailUrl(uploadDto.getThumbUrl())

@@ -104,6 +104,7 @@ public class VideoController {
         String thumbPath = thumbFile.isEmpty() ? "": s3Service.upload(thumbFile,"video-thumbnail");
         requestInfo.setVideoUrl(videoPath);
         requestInfo.setThumbUrl(thumbPath);
+        requestInfo.setFileName(s3Service.getFileName(videoFile));
         requestInfo.setVideoType("DIRECT"); // 직접 영상 업로드
         return videoService.saveVideo(requestInfo);
     }

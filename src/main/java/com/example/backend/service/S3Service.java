@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -67,6 +68,10 @@ public class S3Service {
         }
 
 
+    }
+    public String getFileName(MultipartFile multipartFile) {
+        System.out.println(multipartFile.getOriginalFilename());
+        return multipartFile.getOriginalFilename();
     }
 
 

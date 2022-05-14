@@ -11,6 +11,7 @@ import java.util.Optional;
 @Setter
 public class VideoUploadDto {
     private String email;
+    private String fileName;
     private String title;
     private String content;
     private String videoUrl;
