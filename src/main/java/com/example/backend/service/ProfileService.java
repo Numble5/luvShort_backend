@@ -116,9 +116,13 @@ public class ProfileService {
             if(!userService.checkDefaultImg(profile.getProfileImg())){
                 // 기본 이미지 아닌 경우 -> 기존 이미지 삭제
                 String imgUrl = profile.getProfileImg();
+                System.out.println(profile.getProfileImg());
                 s3Service.delete(imgUrl,"profile-image");
             }
             editMyProfileDto.setProfileImg(s3Service.upload(file,"profile-image"));
+        }
+        else {
+            editMyProfileDto.setProfileImg(profile.getProfileImg());
         }
         profile.updateProfile(editMyProfileDto.getProfileImg(), editMyProfileDto.getIntroduce());
         return ReturnCode.SUCCESS;
