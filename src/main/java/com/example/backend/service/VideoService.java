@@ -205,7 +205,6 @@ public class VideoService {
     public String getThumbNailYouTube(String videoUrl) {
         // 비디오 아이디 값 추출
         // 유튜브 비디오 아이디 끝에서 부터 11자리!
-        System.out.println(Arrays.toString(videoUrl.split("https://www.youtube.com/watch?v=")));
         String youTubeID = videoUrl.substring(videoUrl.length()-11);
         return ("http://img.youtube.com/vi/" + youTubeID + "/0.jpg");
     }
