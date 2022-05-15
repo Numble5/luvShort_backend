@@ -27,6 +27,7 @@ public class UserAllResponseDto {
 
     // 프로필
     private String profileImg;
+    private String introduce;
 
     // interest
     private List<String> interests;
@@ -43,6 +44,7 @@ public class UserAllResponseDto {
         this.city = entity.getUserInfo().getCity();
         this.district = entity.getUserInfo().getDistrict();
         this.genderType = entity.getUserInfo().getGenderType();
+        this.introduce = entity.getProfile().getIntroduce();
         this.profileImg = entity.getProfile().getProfileImg();
         this.createdTime = entity.getCreatedDate();
         this.updatedTime = entity.getUpdatedDate();
