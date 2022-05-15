@@ -93,6 +93,7 @@ public class VideoController {
     @PostMapping("/videos/upload/embed")
     public ResponseEntity<?> uploadEmbeded(@RequestBody VideoUploadDto requestInfo) throws Exception {
         requestInfo.setVideoType("EMBED");
+        requestInfo.setThumbUrl(videoService.getThumbNailYouTube(requestInfo.getVideoUrl()));
         return videoService.saveVideo(requestInfo);
     }
 
