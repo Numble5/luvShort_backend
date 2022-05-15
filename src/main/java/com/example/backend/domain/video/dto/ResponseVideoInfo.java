@@ -26,6 +26,7 @@ public class ResponseVideoInfo {
     private VideoType videoType;
     private ControlType controlType;
 
+    private String fileName;
     private String title;
     private String content;
     private Long hits;
@@ -47,10 +48,11 @@ public class ResponseVideoInfo {
     }
 
     @Builder
-    public ResponseVideoInfo(Long idx, VideoType videoType,ControlType controlType, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
+    public ResponseVideoInfo(Long idx, VideoType videoType,ControlType controlType,String fileName, String title, String content, Long hits, String thumbnailUrl, String videoUrl, List<VideoCategory> categories, LocalDateTime createdDate, LocalDateTime updatedDate, User uploader, Boolean heart) {
         this.video_idx = idx;
         this.videoType = videoType;
         this.controlType = controlType;
+        this.fileName = fileName;
         this.title = title;
         this.content = content;
         this.hits = hits;

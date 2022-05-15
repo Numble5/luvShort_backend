@@ -104,6 +104,7 @@ public class VideoController {
         String thumbPath = thumbFile.isEmpty() ? "": s3Service.upload(thumbFile,"video-thumbnail");
         requestInfo.setVideoUrl(videoPath);
         requestInfo.setThumbUrl(thumbPath);
+        requestInfo.setFileName(s3Service.getFileName(videoFile));
         requestInfo.setVideoType("DIRECT"); // 직접 영상 업로드
         return videoService.saveVideo(requestInfo);
     }
@@ -119,6 +120,12 @@ public class VideoController {
     public ResponseEntity<?> deleteVideo(@PathVariable("idx") Long videoIdx)
     {
         return videoService.deleteVideo(videoIdx);
+    }
+
+    /** 관리자 - 영상 제한**/
+    @PutMapping("/videos/control/{idx}")
+    public ResponseEntity<?> controlVideo(@PathVariable("idx") Long videoIdx,@RequestParam("email") String user) throws Exception {
+        return new ResponseEntity<>(videoService.controlVideoBy(videoIdx,user),HttpStatus.OK);
     }
 
 }

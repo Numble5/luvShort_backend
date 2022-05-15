@@ -7,6 +7,7 @@ import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.enums.GenderType;
+import com.example.backend.domain.user.enums.RoleType;
 import com.example.backend.domain.video.Category;
 import com.example.backend.domain.video.Video;
 import com.example.backend.domain.video.VideoCategory;
@@ -50,6 +51,7 @@ public class VideoService {
         ResponseVideoInfo info = ResponseVideoInfo.builder()
                 .idx(v.getIdx())
                 .content(v.getContent())
+                .fileName(v.getFileName())
                 .title(v.getTitle())
                 .videoType(v.getVideoType())
                 .controlType(v.getControlType())
@@ -69,6 +71,7 @@ public class VideoService {
         ResponseVideoInfo info = ResponseVideoInfo.builder()
                 .idx(v.getIdx())
                 .content(v.getContent())
+                .fileName(v.getFileName())
                 .title(v.getTitle())
                 .videoType(v.getVideoType())
                 .controlType(v.getControlType())
@@ -210,6 +213,7 @@ public class VideoService {
         // 비디오 생성
         Video video = Video.builder()
                 .title(uploadDto.getTitle())
+                .fileName(uploadDto.getFileName())
                 .content(uploadDto.getContent())
                 .hits(0L)
                 .thumbnailUrl(uploadDto.getThumbUrl())
@@ -297,6 +301,24 @@ public class VideoService {
         // 2.3) video record 삭제
         videoRepository.delete(video);
         return new ResponseEntity<>("직접 영상 삭제", HttpStatus.OK);
+
+    }
+
+    public ResponseVideoInfo controlVideoBy(Long videoIdx, String email) throws Exception {
+        Video video = videoRepository.findByIdx(videoIdx)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 비디오입니다."));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        // 관리자일 경우
+        if(RoleType.ADMIN.equals(user.getRoleType())) {
+            video.updateControlType(video);
+            videoRepository.save(video);
+        }else {
+            throw new Exception("관리자가 아닙니다.");
+        }
+        return makeResVideoInfo(video);
 
     }
 

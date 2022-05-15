@@ -12,13 +12,15 @@ import java.util.List;
 @Setter
 public class VideoUpdateDto {
     private Long idx;
+    private String fileName;
     private String title;
     private String content;
     private List<String> categories;
 
     @Builder
-    public VideoUpdateDto(Long idx, String title, String content, List<String> categories) {
+    public VideoUpdateDto(Long idx, String fileName,String title, String content, List<String> categories) {
         this.idx = idx;
+        this.fileName = fileName;
         this.title = title;
         this.content = content;
         this.categories = categories;
