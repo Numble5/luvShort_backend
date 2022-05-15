@@ -2,7 +2,6 @@ package com.example.backend.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -22,6 +21,7 @@ public enum ReturnCode {
     INVALID_COOKIE(400,"유효하지 않은 쿠키"),
     FILE_CAN_NOT_SAVE(400, "파일 저장에 실패했습니다."),
     FILE_CAN_NOT_DELETE(400,"파일 삭제에 실패했습니다."),
+    PROFILE_NOT_FOUND(404, "프로필을 조회할 수 없습니다."),
     SUCCESS(200,"성공");
 
     private final int status;

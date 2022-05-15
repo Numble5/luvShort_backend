@@ -1,6 +1,7 @@
 package com.example.backend.domain.user;
 
 import com.example.backend.domain.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,4 +20,21 @@ public class Profile extends BaseEntity {
     @Column
     private String profileImg;
 
+    @Column
+    private String introduce;
+
+    @Builder
+    public Profile(String profileImg, String introduce) {
+        this.profileImg = profileImg;
+        this.introduce = introduce;
+    }
+
+    public void updateImg(String img) {
+        this.profileImg = img;
+    }
+
+    public void updateProfile(String img, String introduce){
+        this.profileImg = img;
+        this.introduce = introduce;
+    }
 }

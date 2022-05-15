@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.Interest;
+import com.example.backend.domain.user.Profile;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.UserInterest;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
@@ -9,8 +9,10 @@ import com.example.backend.domain.user.dto.SignUpResponseDto;
 import com.example.backend.domain.user.dto.UserAllResponseDto;
 import com.example.backend.domain.user.embedded.UserInfo;
 import com.example.backend.domain.user.dto.UserReponseDtoByCookie;
+import com.example.backend.domain.user.enums.GenderType;
 import com.example.backend.exception.ReturnCode;
 import com.example.backend.repository.InterestRepository;
+import com.example.backend.repository.ProfileRepository;
 import com.example.backend.repository.UserInterestRepository;
 import com.example.backend.security.TokenProvider;
 import com.example.backend.repository.UserRepository;
@@ -20,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -34,6 +38,34 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final InterestRepository interestRepository;
     private final UserInterestRepository userInterestRepository;
+    private final ProfileRepository profileRepository;
+
+    private final S3Service s3Service;
+
+    @Transactional
+    public ReturnCode saveUserInterest(List<String> interestInput, User user){
+        //프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
+        List<Interest> interests = new LinkedList<>();
+        for(String i: interestInput){
+            Optional<Interest> interest = interestRepository.findByInterestName(i);
+            if (!interest.isPresent()){
+                return ReturnCode.INVALID_INTEREST;
+            }
+            interests.add(interest.get());
+        }
+
+        // 3-2. UserInterest 엔티티 저장하고 User에 저장하기 위해 리스트에 추가
+        List<UserInterest> userInterests = new LinkedList<>();
+        for(Interest interest: interests){
+            // userInterest 객체 생성해서 레포지토리에 저장
+            UserInterest userInterest = new UserInterest(user,interest);
+            userInterestRepository.save(userInterest);
+            userInterests.add(userInterest);
+        }
+        // 양방향 관계 저장
+        user.getUserInterests().addAll(userInterests);
+        return ReturnCode.SUCCESS;
+    }
 
     // User 엔티티 만들고 레포지토리에 저장
     // 1. 해당 이메일을 갖는 User 엔티티가 이미 있으면(0개 초과이면) 400 에러
@@ -59,26 +91,8 @@ public class UserService {
 
         // 3. 관심사 추가
         // 3-1. 프론트에서 받아온 관심사 문자열이 모두 Interest 테이블에 있는지 확인
-        List<String> interestStr = signUpRequestDto.getSelectedInterests();
-        List<Interest> interests = new LinkedList<>();
-        for(String i: interestStr){
-            Optional<Interest> interest = interestRepository.findByInterestName(i);
-            if (!interest.isPresent()){
-                return ReturnCode.INVALID_INTEREST;
-            }
-            interests.add(interest.get());
-        }
-
-        // 3-2. UserInterest 엔티티 저장하고 User에 저장하기 위해 리스트에 추가
-        List<UserInterest> userInterests = new LinkedList<>();
-        for(Interest interest: interests){
-            // userInterest 객체 생성해서 레포지토리에 저장
-            UserInterest userInterest = new UserInterest(user,interest);
-            userInterestRepository.save(userInterest);
-            userInterests.add(userInterest);
-        }
-        // 양방향 관계 저장
-        user.addInterests(userInterests);
+        List<String> interestInput = signUpRequestDto.getSelectedInterests();
+        ReturnCode returnCode = saveUserInterest(interestInput, user);
 
         // 4.
         userRepository.save(user);
@@ -86,12 +100,18 @@ public class UserService {
 
     }
 
-    // 1. 해당 이메일을 갖는 User 엔티티가 없으면 회원가입(step1으로 이동)
-    // 2. User 엔티티가 없으면 로그인(메인 페이지로 이동)
+    // 1. 해당 이메일을 갖는 User 엔티티가 있으면 로그인(메인 페이지로 이동)
+    // 1-2. 이때 현재시간으로 lastLoginDate 업데이트
+    // 2. User 엔티티가 있으면 회원가입(step1으로 이동)
+    @Transactional
     public Boolean alreadySignUp(String email){
-        if(userRepository.existsOnlyByEmail(email)){
+        Optional<User> user = userRepository.findByEmail(email);
+        // 1.
+        if(user.isPresent()){
+            user.get().updateLoginDate(); // 1-2.
             return true;
         }
+        // 2.
         return false;
     }
 
@@ -108,9 +128,12 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Optional<User> user = userRepository.findByEmail(email);
-        // 엔티티 객체 없으면 있으면 유저정보 리턴
-        // 없으면 null 리턴
-        if (user.isPresent()){
+        // 엔티티 객체 없으면 null 리턴
+        if (!user.isPresent()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        // 엔티티 객체 있으면 유저정보 리턴
+        else{
             List<UserInterest> userInterests = userInterestRepository.findUserInterestsByUser(user.get());
             List<String> interestStr = new LinkedList<>();
             for(UserInterest userInterest: userInterests){
@@ -118,14 +141,25 @@ public class UserService {
             }
             return new ResponseEntity<>(new UserReponseDtoByCookie(user.get(),interestStr), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    }
 
 
+    public Boolean checkDefaultImg(String imgUrl) {
+        String defaultM =  "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-m.jpeg";
+        String defaultW =  "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-w.jpeg";
+
+        if(!imgUrl.equals(defaultW) && !imgUrl.equals(defaultM)) return Boolean.FALSE;
+        else return Boolean.TRUE; // 기본이미지일 경우
+    }
     @Transactional
     public Boolean deleteUser(Long idx) {
         User user = userRepository.findById(idx)
                 .orElseThrow(()-> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
+
+        // 이미지파일삭제 -> 기본 이미지 아닌 경우
+        if(user.getProfile() != null && !checkDefaultImg(user.getProfile().getProfileImg())) {
+            s3Service.delete(user.getProfile().getProfileImg(),"profile-image");
+        }
 
         userRepository.delete(user); //cascade - video, VideoCategory, userInterest,Like 다 삭제?
 
@@ -133,4 +167,47 @@ public class UserService {
 
     }
 
+    @Transactional
+    public ResponseEntity<?> updateProfile(String email , MultipartFile file) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
+
+
+        Profile profile = user.getProfile();
+
+        if(!checkDefaultImg(profile.getProfileImg())){
+            // 기본 이미지 아닌 경우 -> 기존 이미지 삭제
+            String imgUrl = profile.getProfileImg();
+            s3Service.delete(imgUrl,"profile-image");
+        }
+        // 프로필 변경 사항 저장
+        profile.updateImg(s3Service.upload(file,"profile-image"));
+        profileRepository.save(profile);
+        return new ResponseEntity<>(profile.getProfileImg(),HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<?> changeToDefaultImg(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("해당 사용자가 존재하지 않습니다."));
+
+        Profile profile = user.getProfile();
+        String defaultM =  "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-m.jpeg";
+        String defaultW =  "https://numble-luvshort.s3.ap-northeast-2.amazonaws.com/profile-image/profile-w.jpeg";
+
+        if(!checkDefaultImg(profile.getProfileImg())){
+            // 기본 이미지 아닌 경우 -> 기존 이미지 삭제
+            String imgUrl = profile.getProfileImg();
+            s3Service.delete(imgUrl,"profile-image");
+
+            // 사용자 성별 확인 후 기본 이미지
+            profile.updateImg(user.getUserInfo().getGenderType() == GenderType.MALE ?
+                    defaultM : defaultW);
+
+            profileRepository.save(profile);
+        }
+
+        return new ResponseEntity<>(profile.getProfileImg(),HttpStatus.OK);
+
+    }
 }

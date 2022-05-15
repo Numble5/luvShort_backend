@@ -1,6 +1,5 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.dto.Message;
 import com.example.backend.domain.user.User;
 import com.example.backend.domain.user.dto.SignUpRequestDto;
 import com.example.backend.domain.user.dto.SignUpResponseDto;
@@ -21,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +66,6 @@ public class UserController {
                                                         .maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();
-
             response.setHeader("Set-Cookie", responseCookie.toString());
             return ResponseEntity.created(URI.create("/auth/register-submit"))
                     .body(new SignUpResponseDto(user));
@@ -80,10 +79,13 @@ public class UserController {
     public ResponseEntity<?> getUserInfoByCookie(HttpServletRequest request){
 
         String accessToken = jwtAuthenticationFilter.parseCookie(request);
+        
         if(accessToken==null){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("no accessToken in cookie", HttpStatus.NO_CONTENT);
         }
         return userService.getUserInfoByJwt(accessToken);
+
+
     }
 
     // 닉네임 중복검사
@@ -113,5 +115,21 @@ public class UserController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> deleteCookie(HttpServletResponse response){
+        response.setHeader("Cookie", "deleteCookie");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
+    /** 새로운 이미지 등록 **/
+    @PostMapping("/user/profileImg")
+    public ResponseEntity<?> updateProfileImg(@RequestParam("email") String email, MultipartFile profileFile ) {
+        return userService.updateProfile(email,profileFile);
+    }
+
+    /** 기본 이미지로 변경 **/
+    @DeleteMapping("/user/profileImg")
+    public ResponseEntity<?> deleteProfileImg(@RequestParam("email") String email) {
+        return userService.changeToDefaultImg(email);
+    }
 }
