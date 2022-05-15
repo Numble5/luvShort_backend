@@ -43,8 +43,10 @@ public class ProfileService {
     public ResponseEntity<?> getOtherProfile(User profileUser, User requestUser) {
 
         // profileUser(상대방)가 올린 영상과 좋아한 영상의 조회(Dto써서 무한참조 방지)
-        List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
-        List<Long> otherVideosIdx = otherVideos.stream().map(ResponseVideoInfo::getVideo_idx).collect(Collectors.toList()); // 인덱스만
+        List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream()
+                                                .map(videoService::makeResVideoInfo)
+                                                .sorted(Comparator.comparing(ResponseVideoInfo::getCreatedDate).reversed())
+                                                .collect(Collectors.toList());
         List<ResponseVideoInfo> otherLikesVideoList = getResponseVideoInfoList(profileUser);
 
         // requestUser(나)가 좋아한 영상의 인덱스 조회하기
@@ -61,12 +63,10 @@ public class ProfileService {
 
         Map<String,Object> response = new HashMap<>();
 
-        response.put("otherVideosIdx",otherVideosIdx);
-        response.put("myLikesVideoListIdx",myLikesVideoListIdx);
-
         // 상대방의 영상 중 내가 좋아한 영상이면 Heart=true, 아니면 Heart=false로 ResponseVideoInfo 만들기
-        for(ResponseVideoInfo video: otherVideos){                                 // 상대방의 영상이
-            if (myLikesVideoListIdx.contains(video.getVideo_idx())){
+        // 인덱스로 비교해야함
+        for(ResponseVideoInfo video: otherVideos){
+            if (myLikesVideoListIdx.contains(video.getVideo_idx())){ // 인덱스로 비교
                 video.setHeart(true);
                 doILikeOther = true;
             }
@@ -87,11 +87,8 @@ public class ProfileService {
         else{
             response.put("isMatched","매칭성공");
         }
-        response.put("doILikeOther", doILikeOther);
-        response.put("doesOtherLikesMe", doesOtherLikesMe);
         response.put("profile", new ProfileResponseDto(profileUser));
         response.put("videos", otherVideos);
-        response.put("myLikesVideoList", myLikesVideoList);
 
         return ResponseEntity.ok().body(response);
     }
@@ -99,7 +96,10 @@ public class ProfileService {
     public ResponseEntity<?> getMyProfile(User requestUser){
         Map<String,Object> response = new HashMap<>();
         response.put("profile", new ProfileResponseDto(requestUser));
-        response.put("videos",requestUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList()));
+        response.put("videos",requestUser.getMyVideos().stream()
+                            .map(videoService::makeResVideoInfo)
+                            .sorted(Comparator.comparing(ResponseVideoInfo::getCreatedDate).reversed())
+                            .collect(Collectors.toList()));
         return ResponseEntity.ok().body(response);
     }
 
