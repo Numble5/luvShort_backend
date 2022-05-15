@@ -46,23 +46,29 @@ public class ProfileService {
 
         // profileUser(상대방)가 올린 영상과 좋아한 영상의 조회(Dto써서 무한참조 방지)
         List<ResponseVideoInfo> otherVideos = profileUser.getMyVideos().stream().map(videoService::makeResVideoInfo).collect(Collectors.toList());
+        List<Long> otherVideosIdx = otherVideos.stream().map(ResponseVideoInfo::getVideo_idx).collect(Collectors.toList()); // 인덱스만
         List<ResponseVideoInfo> otherLikesVideoList = getResponseVideoInfoList(profileUser);
 
         // requestUser(나)가 좋아한 영상의 인덱스 조회하기
         List<ResponseVideoInfo> myLikesVideoList =  getResponseVideoInfoList(requestUser);
+        List<Long> myLikesVideoListIdx = myLikesVideoList.stream().map(ResponseVideoInfo::getVideo_idx).collect(Collectors.toList()); // 인덱스만
 
         // 내가 상대방을 좋아하는지
         Boolean doILikeOther = false;
         // 상대방이 나를 좋아하는지
-        Boolean doesOtherLikesMe = false;
-        doesOtherLikesMe = otherLikesVideoList.stream()                             // 상대방이 좋아한 영상의
+        Boolean doesOtherLikesMe = otherLikesVideoList.stream()                             // 상대방이 좋아한 영상의
                                                 .map(ResponseVideoInfo::getUploader)                        // 업로더 중
                                                 .map(VideoUploaderDto::getUser_idx)
                                                 .anyMatch(userIdx -> userIdx.equals(requestUser.getIdx()));    // 내가 있는지
 
+        Map<String,Object> response = new HashMap<>();
+
+        response.put("otherVideosIdx",otherVideosIdx);
+        response.put("myLikesVideoListIdx",myLikesVideoListIdx);
+
         // 상대방의 영상 중 내가 좋아한 영상이면 Heart=true, 아니면 Heart=false로 ResponseVideoInfo 만들기
         for(ResponseVideoInfo video: otherVideos){                                 // 상대방의 영상이
-            if (myLikesVideoList.contains(video)){                                         // 내가 좋아한 영상에 있으면 FIXME LinkedList-> LinkedHashSet으로 바꿔서 시간복잡도 줄이기
+            if (myLikesVideoListIdx.contains(video.getVideo_idx())){
                 video.setHeart(true);
                 doILikeOther = true;
             }
@@ -70,8 +76,6 @@ public class ProfileService {
                 video.setHeart(false);
             }
         }
-
-        Map<String,Object> response = new HashMap<>();
 
         if(!doesOtherLikesMe && !doILikeOther){
             response.put("isMatched","하트없음");
