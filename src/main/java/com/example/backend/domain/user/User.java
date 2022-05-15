@@ -1,6 +1,7 @@
 package com.example.backend.domain.user;
 
 import com.example.backend.domain.BaseEntity;
+import com.example.backend.domain.Chat.UserChat;
 import com.example.backend.domain.likes.Likes;
 import com.example.backend.domain.user.dto.EditMyProfileDto;
 import com.example.backend.domain.user.embedded.UserInfo;
@@ -65,6 +66,11 @@ public class User extends BaseEntity {
     private List<Likes> likesList = new LinkedList<>();
 
 
+    // 사용자는 여러 대화방과 관계가진다.
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private List<UserChat> userChats = new LinkedList<>();
 
     @Builder
     public User(String email, String nickname, RoleType roleType, UserStatus status, UserInfo userInfo, Profile profile){
