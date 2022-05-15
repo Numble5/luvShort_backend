@@ -62,7 +62,7 @@ public class ProfileService {
         for(ResponseVideoInfo video: otherVideos){                                 // 상대방의 영상이
             if (myLikesVideoList.contains(video)){                                         // 내가 좋아한 영상에 있으면 FIXME LinkedList-> LinkedHashSet으로 바꿔서 시간복잡도 줄이기
                 video.setHeart(true);
-                if (!doILikeOther) doILikeOther = true; // 처음 한번만 체크
+                doILikeOther = true;
             }
             else{
                 video.setHeart(false);
@@ -83,9 +83,11 @@ public class ProfileService {
         else{
             response.put("isMatched","매칭성공");
         }
-
+        response.put("doILikeOther", doILikeOther);
+        response.put("doesOtherLikesMe", doesOtherLikesMe);
         response.put("profile", new ProfileResponseDto(profileUser));
         response.put("videos", otherVideos);
+        response.put("myLikesVideoList", myLikesVideoList);
 
         return ResponseEntity.ok().body(response);
     }
