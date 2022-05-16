@@ -28,7 +28,7 @@ public interface VideoRepository extends JpaRepository<Video, Long>{
             "left join VideoCategory vc\n" +
             "on vc.video.idx = v.idx\n"+
             "where v.uploader.userInfo.genderType = :gender\n" +
-            "or vc.category.categoryName in (:categories)\n" +
+            "and vc.category.categoryName in (:categories)\n" +
             "order by v.idx desc")
     List<Video> findByGenderFiltering(GenderType gender, Collection categories);
 
@@ -37,7 +37,7 @@ public interface VideoRepository extends JpaRepository<Video, Long>{
             "left join VideoCategory vc\n" +
             "on vc.video.idx = v.idx\n"+
             "where (v.uploader.userInfo.city = :city and v.uploader.userInfo.district = :district)\n" +
-            "or vc.category.categoryName in (:categories)\n" +
+            "and vc.category.categoryName in (:categories)\n" +
             "order by v.idx desc")
     List<Video> findByLocationFiltering(String city,String district,Collection categories);
 
