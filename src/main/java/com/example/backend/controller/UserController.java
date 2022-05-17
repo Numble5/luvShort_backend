@@ -66,7 +66,7 @@ public class UserController {
                                                         .maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();
-            response.setHeader("Set-Cookie", responseCookie.toString());
+            response.setHeader("Cookie", responseCookie.toString());
             return ResponseEntity.created(URI.create("/auth/register-submit"))
                     .body(new SignUpResponseDto(user));
         }
@@ -97,6 +97,7 @@ public class UserController {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     // 사용자 ID -> 사용자 정보 return : 일단 user entity 통채로
     @GetMapping("/user/{email}")
