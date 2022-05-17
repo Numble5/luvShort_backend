@@ -33,6 +33,7 @@ public class Video extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ControlType controlType;
 
+    private String fileName;
     private String title;
     private String content;
     private Long hits;
@@ -56,7 +57,8 @@ public class Video extends BaseEntity {
     private List<Likes> likesList = new LinkedList<>();
 
     @Builder
-    public Video(String title, String content, Long hits, String thumbnailUrl, String videoUrl, User uploader,VideoType videoType){
+    public Video(String fileName,String title, String content, Long hits, String thumbnailUrl, String videoUrl, User uploader,VideoType videoType){
+        this.fileName = fileName;
         this.title = title;
         this.content = content;
         this.hits = Long.valueOf("0"); // 조회수는 0으로 초기화
@@ -91,5 +93,9 @@ public class Video extends BaseEntity {
     public void updateVideoInfo(VideoUpdateDto updateDto){
         this.title = updateDto.getTitle();
         this.content = updateDto.getContent();
+    }
+
+    public void updateControlType(Video video) {
+        this.controlType = ControlType.CENSORED;
     }
 }
