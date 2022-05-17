@@ -65,9 +65,9 @@ public class KakaoApiController {
 
             // 쿠키 설정
             ResponseCookie responseCookie = ResponseCookie.from("access_token", jwt)
-                    .path("/")
-                    .httpOnly(false)
-                    .domain("https://luvshort.netlify.app/")
+                    //.path("/")
+                    .httpOnly(true)
+                    //.domain("https://luvshort.netlify.app/")
                     .secure(true)
                     .maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
