@@ -72,7 +72,7 @@ public class KakaoApiController {
                     .maxAge(7 * 24 * 60 * 60)
                     .sameSite("None")
                     .build();
-            response.setHeader("Cookie", responseCookie.toString());
+            response.setHeader("Set-Cookie", responseCookie.toString());
 
             return new ResponseEntity<>(new RedirectUrlResponse("/", email), HttpStatus.OK);
 
