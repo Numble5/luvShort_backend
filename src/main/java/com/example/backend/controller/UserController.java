@@ -68,7 +68,7 @@ public class UserController {
                                                         .maxAge(7 * 24 * 60 * 60)
                                                         .sameSite("None")
                                                         .build();
-            response.setHeader("Cookie", responseCookie.toString());
+            response.setHeader("Set-Cookie", responseCookie.toString());
             return ResponseEntity.created(URI.create("/auth/register-submit"))
                     .body(new SignUpResponseDto(user));
         }
